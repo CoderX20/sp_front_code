@@ -1,23 +1,86 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import HallLeft from "@/views/HallLeft.vue";
+import AttractionLeft from "@/views/AttractionLeft.vue";
+import AgencyLeft from "@/views/AgencyLeft.vue";
+import personFile from "@/views/PersonFile.vue";
+import MyHallMessagesShow from "@/components/MyHallMessagesShow.vue";
+import MyAttractionMessagesShow from "@/components/MyAttractionMessagesShow.vue";
+import MyAgencyCommentsShow from "@/components/MyAgencyCommentsShow.vue";
 
 Vue.use(VueRouter)
 
+let originPush=VueRouter.prototype.push;
+let originReplace = VueRouter.prototype.replace;
+VueRouter.prototype.push=function (location,resolve,reject){
+  if(resolve&&reject){
+    originPush.call(this,location,resolve,reject)
+  }
+  else{
+    originPush.call(this,location,()=>{},(error)=>{
+      error
+    })
+  }
+}
+VueRouter.prototype.replace=function (location,resolve,reject){
+  if(resolve&&reject){
+    originReplace.call(this,location,resolve,reject)
+  }else{
+    originReplace.call(this,location,()=>{},(error)=>{
+      error
+    })
+  }
+}
+
 const routes = [
   {
-    path: '/',
-    name: 'home',
-    component: HomeView
+    path:"/hall",
+    components:{
+      left:HallLeft
+    }
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  }
+    path:"/attraction",
+    components: {
+      left:AttractionLeft
+    }
+  },
+  {
+    path:'/agency',
+    components: {
+      left:AgencyLeft
+    }
+  },
+  {
+    path:'/user',
+    components: {
+      person:personFile
+    },
+    children:[
+      {
+        path:"hallMessages",
+        components:{
+          personData:MyHallMessagesShow
+        }
+      },
+      {
+        path:"attractionComments",
+        components: {
+          personData:MyAttractionMessagesShow
+        }
+      },
+      {
+        path:"agencyComments",
+        components: {
+          personData:MyAgencyCommentsShow
+        }
+      },
+      {
+        path:"",
+        redirect:"hallMessages"
+      },
+    ]
+  },
 ]
 
 const router = new VueRouter({

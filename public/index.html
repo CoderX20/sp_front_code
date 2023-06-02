@@ -6,6 +6,17 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title><%= htmlWebpackPlugin.options.title %></title>
+      <link rel="stylesheet" href="./dist/leaflet/iclient-leaflet.min.css">
+      <script src="./dist/leaflet/include-leaflet.js"></script>
+      <!-- 加载Draw插件 -->
+      <link rel="stylesheet" href="./draw/leaflet.draw.css">
+      <script src="./draw/leaflet.draw.js"></script>
+      <style>
+          *{
+              margin: 0px;
+              padding: 0px;
+          }
+      </style>
   </head>
   <body>
     <noscript>
