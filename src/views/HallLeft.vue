@@ -35,11 +35,12 @@ export default {
       messages_temp:[],
       search_keyword:"",
       message_text:"",
+      myTrumpHallMessages:[],
     }
   },
   computed:{
     ...mapState({
-      myTrumpHallMessages:state => state.gx.myTrumpHallMessages,
+      // myTrumpHallMessages:state => state.gx.myTrumpHallMessages,
       userInfo:state => state.gx.userInfo,
     })
   },
@@ -118,7 +119,17 @@ export default {
       // show用于展示留言板
       this.message_list_show=this.messages_temp
     })
-
+    // 获取点赞数据
+    gx_api.get_my_trumps({
+      id:this.$cookies.get("userid"),
+      identify:this.$cookies.get("identify"),
+    }).then((response)=>{
+      if(response.data.state===1){
+        this.$store.state.gx.myTrumpHallMessages=response.data.trump_data
+      }
+    }).catch((err)=>{
+      console.log(err)
+    })
   },
   watch:{
     search_keyword(newVal){

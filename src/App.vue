@@ -51,26 +51,26 @@ export default {
           identify:response.data.user.identify
         }
         // 获取点赞数据
-        setTimeout(()=>{
-          gx_api.get_my_trumps({
-            id:this.$cookies.get("userid"),
-            identify:this.$cookies.get("identify"),
-          }).then((response)=>{
-            if(response.data.state===1){
-              this.$store.state.gx.myTrumpHallMessages=response.data.trump_data
-            }
-          }).catch((err)=>{
-            console.log(err)
-          },300)
-        })
-        // 获取大厅发言数据
-        gx_api.get_my_hall_messages({
-          id:this.$cookies.get('userid'),
-          identify:this.$cookies.get('identify')
-        }).then((response)=>{
-          // console.log(response)
-          this.$store.state.gx.myHallMessages=response.data.message_data
-        })
+        // setTimeout(()=>{
+        //   gx_api.get_my_trumps({
+        //     id:this.$cookies.get("userid"),
+        //     identify:this.$cookies.get("identify"),
+        //   }).then((response)=>{
+        //     if(response.data.state===1){
+        //       this.$store.state.gx.myTrumpHallMessages=response.data.trump_data
+        //     }
+        //   }).catch((err)=>{
+        //     console.log(err)
+        //   },300)
+        // })
+        // // 获取大厅发言数据
+        // gx_api.get_my_hall_messages({
+        //   id:this.$cookies.get('userid'),
+        //   identify:this.$cookies.get('identify')
+        // }).then((response)=>{
+        //   // console.log(response)
+        //   this.$store.state.gx.myHallMessages=response.data.message_data
+        // })
       } else {
         this.$store.state.gx.hasLogin = false
       }

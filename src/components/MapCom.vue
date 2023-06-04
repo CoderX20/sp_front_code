@@ -13,7 +13,7 @@ export default {
       base_url:"http://localhost:8090/iserver/services/map-SiChuanLvYouZiYuan/rest/maps/sichuan1",
       data_url:"http://localhost:8090/iserver/services/data-SiChuanLvYouZiYuan/rest/data",
       network_url:"http://localhost:8090/iserver/services/map-SiChuanLvYouZiYuan/rest/maps/trafficNetwork",
-      Analyst_url : "http://localhost:8090/iserver/services/transportationAnalyst-SiChuanLvYouZiYuan/rest/networkanalyst/%E5%85%AC%E8%B7%AF%E7%BD%91@SiChuan",
+      Analyst_url : "http://localhost:8090/iserver/services/transportationAnalyst-SiChuanLvYouZiYuan/rest/networkanalyst/Road@SiChuan",
 
     }
   },

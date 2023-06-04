@@ -47,3 +47,7 @@ export const alter_password=(params)=>{
 export const get_my_hall_messages=(params)=>{
     return http.post('/getMyHallMessages',params)
 }
+
+export const edit_hall_message=(params)=>{
+    return http.post('/editHallMessage',params)
+}

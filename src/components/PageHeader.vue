@@ -142,7 +142,12 @@ export default {
             password:response.data.user.password,
             identify:response.data.user.identify
           }
-          this.getMyBasicData()
+          // this.getMyBasicData()
+          // var now_path=this.$route.path
+          // this.$router.replace('/')
+          // this.$router.replace(now_path)
+          this.$router.go(0)
+
         }
         else if (response.data.state===0){
           this.$message.error("密码错误")
@@ -187,7 +192,8 @@ export default {
             password:response.data.user.password,
             identify:response.data.user.identify
           }
-          this.getMyBasicData()
+          // this.getMyBasicData()
+          this.$router.go(0)
         }
         else {
           this.$message.error('注册失败')
