@@ -5,6 +5,7 @@ const gx = {
         userInfo:{},
         myTrumpHallMessages:[],
         myHallMessages:[],
+        attractions:[],
     }),
     mutations: {},
     getters: {},

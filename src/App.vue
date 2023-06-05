@@ -102,6 +102,10 @@ export default {
     .main {
       width: 450px;
       height: calc(100vh - 60px);
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     .person{
       width: 100vw;

@@ -51,3 +51,7 @@ export const get_my_hall_messages=(params)=>{
 export const edit_hall_message=(params)=>{
     return http.post('/editHallMessage',params)
 }
+
+export const get_all_attractions=()=>{
+    return http.post('/getAllAttractions')
+}
