@@ -7,7 +7,18 @@
 
 <script>
 export default {
-
+  data(){
+    return{
+      attraction_id:-1,
+    }
+  },
+  components:{},
+  computed:{},
+  methods:{},
+  mounted() {
+    this.attraction_id=this.$route.params.id
+  },
+  watch:{},
 }
 </script>
 

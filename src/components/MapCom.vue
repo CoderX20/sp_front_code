@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import {mapState} from "vuex"
 export default {
   data() {
     return {
@@ -14,28 +15,30 @@ export default {
       data_url:"http://localhost:8090/iserver/services/data-SiChuanLvYouZiYuan/rest/data",
       network_url:"http://localhost:8090/iserver/services/map-SiChuanLvYouZiYuan/rest/maps/trafficNetwork",
       Analyst_url : "http://localhost:8090/iserver/services/transportationAnalyst-SiChuanLvYouZiYuan/rest/networkanalyst/Road@SiChuan",
-
+      attractions_layer:L.geoJSON(),
+      map:null,
+      attraction_icon:L.icon({
+        iconUrl: '/img/旅游景点.png',
+        iconSize: [20, 20],
+      }),
     }
   },
-  computed: {},
+  computed: {
+    ...mapState({
+      attractions_points:state => state.gx.attractions_map,
+    })
+  },
   methods: {
     // 加载地图
     mapLoad() {
-      var map = L.map('map', {
-        crs: L.CRS.EPSG4326,
-        center: [30.18, 102.95],
-        zoom: 5
-      })
       var draw_layer //绘制的图层
-
-      new L.supermap.TiandituTileLayer({key:"29e59aca0fac83aa8be876fa6e35573d",noWrap:false}).addTo(map)
-      new L.supermap.TiledMapLayer(this.base_url).addTo(map);
-      new L.supermap.TiledMapLayer(this.network_url).addTo(map);
-      L.control.scale().addTo(map)
+      new L.supermap.TiandituTileLayer({key:"29e59aca0fac83aa8be876fa6e35573d",noWrap:false}).addTo(this.map)
+      new L.supermap.TiledMapLayer(this.base_url).addTo(this.map);
+      new L.supermap.TiledMapLayer(this.network_url).addTo(this.map);
+      L.control.scale().addTo(this.map)
+      this.map.addLayer(this.attractions_layer)
       var editableLayers = new L.FeatureGroup()
-      map.addLayer(editableLayers)
-      // map.invalidateSize(true)
-      map._onResize();
+      this.map.addLayer(editableLayers)
 
       // 添加绘制控件
       var options = {
@@ -55,11 +58,15 @@ export default {
         }
       };
       var drawControl = new L.Control.Draw(options);
-      map.addControl(drawControl);
+      this.map.addControl(drawControl);
+      // 如果有一组显示旅游景点的信息
+      if (this.attractions_points.length>0){
+        this.setAttractionsCenterZoom()
+      }
 
-      this.handleMapEvent(drawControl._container, map);
+      this.handleMapEvent(drawControl._container, this.map);
       // 绘制监听事件
-      map.on("draw:created", (e)=> {
+      this.map.on("draw:created", (e)=> {
         editableLayers.clearLayers()
         var type = e.layerType
         draw_layer = e.layer;
@@ -76,9 +83,16 @@ export default {
           toIndex: 10000,
         });
         // 几何查询
-        new L.supermap.FeatureService(this.data_url).getFeaturesByGeometry(geometryParam, function (result) {
+        new L.supermap.FeatureService(this.data_url).getFeaturesByGeometry(geometryParam, (result)=> {
           // console.log(result.result.features.features)
-          L.geoJSON(result.result.features).addTo(editableLayers) //这里需要将查询返回的结果添加到与绘制图形一个图层里面
+          L.geoJSON(result.result.features,{
+            pointToLayer:(point,latLng)=>{
+              console.log(point)
+              L.marker(latLng,{icon:this.attraction_icon})
+                  .bindPopup(`<a href="/attraction/attractionDetail?id=${point.id}">${point.properties.名称}</a>`)
+                  .addTo(editableLayers)
+            },
+          }).addTo(editableLayers) //这里需要将查询返回的结果添加到与绘制图形一个图层里面
         })
       });
     },
@@ -94,11 +108,46 @@ export default {
         map.scrollWheelZoom.enable();
         map.doubleClickZoom.enable();
       });
+    },
+    setAttractionsCenterZoom(){
+      var lat_max=-1
+      var lat_min=100
+      var lng_max=-1
+      var lng_min=400
+      if (this.attractions_points.length>0){
+        this.attractions_layer.clearLayers()
+        this.attractions_points.forEach(item=>{
+          lat_max=item.lat>lat_max?item.lat:lat_max
+          lat_min=item.lat<lat_min?item.lat:lat_min
+          lng_max=item.lng>lng_max?item.lng:lng_max
+          lng_min=item.lng<lng_min?item.lng:lng_min
+        })
+        this.map.setView(L.latLng((lat_max+lat_min)/2,(lng_max+lng_min)/2),6)
+        this.attractions_points.forEach(item=>{
+          L.marker([item.lat,item.lng],{
+            icon:this.attraction_icon,
+          }).bindPopup(`<a href="/attraction/attractionDetail?id=${item.id}">${item.name}</a>`).addTo(this.attractions_layer)
+        })
+      }
+      else {
+        this.attractions_layer.clearLayers()
+        this.map.setView(L.latLng([30.18, 102.95]),5)
+      }
     }
   },
   mounted() {
+    this.map=L.map('map', {
+      crs: L.CRS.EPSG4326,
+      center: [30.18, 102.95],
+      zoom: 5
+    })
     this.mapLoad()
-  }
+  },
+  watch:{
+    attractions_points(){
+      this.setAttractionsCenterZoom()
+    }
+  },
 }
 </script>
 

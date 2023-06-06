@@ -7,7 +7,7 @@
       <div id="top" v-if="$route.path==='/attraction'">
         <div id="top-search">
           <el-input prefix-icon="el-icon-search" placeholder="请输入需要查询的景点名称" v-model="search_keyword"
-                    @keyup.enter.native="searchGo"></el-input>
+                    @keyup.enter.native="searchGo('未找到相关数据')"></el-input>
         </div>
         <div id="top-select">
           <el-select placeholder="选择城市" v-model="city_filter_str">
@@ -27,8 +27,8 @@
           <attraction-card v-for="item in attraction_list" :key="item.id" :attractionInfo="item"></attraction-card>
         </div>
         <div id="page-control">
-          <el-button icon="el-icon-d-arrow-left" @click="getPrePage">下一页</el-button>
-          <el-button icon="el-icon-d-arrow-right" @click="getNextPage">上一页</el-button>
+          <el-button icon="el-icon-d-arrow-left" @click="getPrePage">上一页</el-button>
+          <el-button icon="el-icon-d-arrow-right" @click="getNextPage">下一页</el-button>
         </div>
       </div>
       <div id="bottom-buts">
@@ -98,6 +98,7 @@ export default {
         }
         else {
           this.$message.warning("已经到顶了")
+          this.page_start_index-=this.page_max_contain
         }
       })
     },
@@ -115,10 +116,11 @@ export default {
         }
         else {
           this.$message.warning("已经到底了")
+          this.page_start_index+=this.page_max_contain
         }
       })
     },
-    searchGo(){
+    searchGo(message){
       this.page_start_index=0
       gx_api.get_attractions_range({
         start:this.page_start_index,
@@ -131,7 +133,7 @@ export default {
           this.attraction_list=response.data.attractions
         }
         else {
-          this.$message.warning("未找到相关数据")
+          this.$message.warning(message)
         }
       })
     }
@@ -155,17 +157,25 @@ export default {
   },
   watch:{
     city_filter_str(){
-      this.searchGo()
+      this.searchGo("未找到相关数据")
     },
     level_filter_str(){
-      this.searchGo()
+      this.searchGo("未找到相关数据")
     },
     search_keyword(newVal){
       if (newVal.length<=0){
-        this.searchGo()
+        this.searchGo("未找到相关数据")
+      }
+    },
+    attraction_list(newVal){
+      if (newVal.length>0){
+        this.$store.state.gx.attractions_map=newVal
       }
     }
   },
+  destroyed() {
+    this.$store.state.gx.attractions_map=[]
+  }
 }
 </script>
 
