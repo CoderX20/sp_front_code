@@ -1,132 +1,170 @@
 <template>
   <div id="attraction-left">
-<!--    旅游景点查询与评价-->
     <div id="container">
-      <div id="top">
+      <div id="attraction-detail">
+        <router-view name="attractionShow"></router-view>
+      </div>
+      <div id="top" v-if="$route.path==='/attraction'">
         <div id="top-search">
-          <el-input placeholder="输入需要搜索的景点名" prefix-icon="el-icon-search" v-model="search_keyword"
-                    @keyup.enter.native="searchAttraction"></el-input>
+          <el-input prefix-icon="el-icon-search" placeholder="请输入需要查询的景点名称" v-model="search_keyword"
+                    @keyup.enter.native="searchGo"></el-input>
         </div>
-        <div id="select-panel">
-          <el-select v-model="city_filter" placeholder="城市选择">
-            <el-option v-for="item in city_list" :key="item" :value="item" :label="item"></el-option>
+        <div id="top-select">
+          <el-select placeholder="选择城市" v-model="city_filter_str">
+            <el-option v-for="item in city_filter_arr" :key="item" :value="item" :label="item"></el-option>
           </el-select>
-          <el-select v-model="level_filter" placeholder="A级景点选择">
-            <el-option v-for="item in level_list" :key="item" :value="item" :label="item"></el-option>
+          <el-select placeholder="选择A级景点" v-model="level_filter_str">
+            <el-option v-for="item in level_filter_arr" :key="item" :value="item" :label="item"></el-option>
           </el-select>
         </div>
       </div>
-      <div id="attraction-show-panel">
-        <div v-if="attractions_list.length<=0">
-          <img src="@/assets/img/无数据.png" alt="">
-          <div style="text-align: center">
-            <h3>无数据</h3>
+      <div id="attractions-show-panel" v-if="$route.path==='/attraction'">
+        <div id="attractions">
+          <div id="no-data" v-if="attraction_list.length<=0" style="text-align: center">
+            <img src="@/assets/img/无数据.png" alt="" width="150"><br>
+            <h4>目前没有数据</h4>
           </div>
+          <attraction-card v-for="item in attraction_list" :key="item.id" :attractionInfo="item"></attraction-card>
         </div>
-        <AttractionCard v-for="item in attractions_list" :key="item.id" :attractionInfo="item"></AttractionCard>
+        <div id="page-control">
+          <el-button icon="el-icon-d-arrow-left" @click="getPrePage">下一页</el-button>
+          <el-button icon="el-icon-d-arrow-right" @click="getNextPage">上一页</el-button>
+        </div>
       </div>
       <div id="bottom-buts">
-        <el-button icon="el-icon-refresh-left" title="重置" @click="resetFilter"></el-button>
+        <el-button icon="el-icon-back" @click="back"></el-button>
+        <el-button icon="el-icon-s-home" @click="home"></el-button>
+        <el-button icon="el-icon-refresh-left" @click="reset"></el-button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import AttractionCard from "@/components/AttractionCard.vue";
+import attractionCard from "@/components/AttractionCard.vue";
 import * as gx_api from "@/api/GX/index"
-import {mapState} from "vuex"
 export default {
   data(){
     return{
       search_keyword:"",
-      city_list:[],
-      city_filter:"",
-      level_list:[],
-      level_filter:"",
-      attractions_list:[],
+      city_filter_str:"",
+      city_filter_arr:[],
+      level_filter_str:"",
+      level_filter_arr:[],
+      attraction_list:[],
+      page_start_index:0,
+      page_max_contain:10,
     }
   },
+  computed:{},
   components:{
-    AttractionCard
-  },
-  computed:{
-    ...mapState({
-      attractions:state => state.gx.attractions,
-    })
+    attractionCard
   },
   methods:{
-    getAllAttractions(){
-      gx_api.get_all_attractions().then((response)=>{
-        this.$store.state.gx.attractions=response.data.attractions
-        this.attractions_list=this.attractions
-        // 城市选择数据
-        this.city_list=this.attractions.map(item=>{
-          return item.city
-        })
-        this.city_list=Array.from(new Set(this.city_list)).sort()
-        // A级景点选择数据
-        this.level_list=this.attractions.map(item=>{
-          return item.level
-        })
-        this.level_list=Array.from(new Set(this.level_list)).sort()
-      }).catch((err)=>{
-        console.log(err)
+    back(){
+      if (this.$route.path!=="/attraction"){
+        this.$router.go(-1)
+      }
+    },
+    home(){
+      this.$router.push("/attraction")
+    },
+    reset(){
+      this.search_keyword=""
+      this.city_filter_str=""
+      this.level_filter_str=""
+      this.page_start_index=0
+      gx_api.get_attractions_range({
+        start:this.page_start_index,
+        end:this.page_max_contain+this.page_start_index-1,
+        city:this.city_filter_str,
+        level:this.level_filter_str,
+        keyword:this.search_keyword,
+      }).then((response)=>{
+        this.attraction_list=response.data.attractions
       })
     },
-    resetFilter(){
-      this.city_filter=""
-      this.level_filter=""
-      this.search_keyword=""
-    },
-    searchAttraction(){
-      if(this.search_keyword.length>0){
-        // console.log(this.attractions[0].name)
-        this.attractions_list=this.attractions.filter(item=>{
-          return item.name.includes(this.search_keyword)
-        })
-        if(this.attractions_list.length<=0){
-          this.$message.warning("没有找到相关景点")
-          this.attractions_list=this.attractions
+    getNextPage(){
+      this.page_start_index+=this.page_max_contain
+      gx_api.get_attractions_range({
+        start:this.page_start_index,
+        end:this.page_max_contain+this.page_start_index-1,
+        city:this.city_filter_str,
+        level:this.level_filter_str,
+        keyword:this.search_keyword,
+      }).then((response)=>{
+        if(response.data.attractions.length>0){
+          this.attraction_list=response.data.attractions
         }
-      }
+        else {
+          this.$message.warning("已经到顶了")
+        }
+      })
     },
+    getPrePage(){
+      this.page_start_index-=this.page_max_contain
+      gx_api.get_attractions_range({
+        start:this.page_start_index,
+        end:this.page_max_contain+this.page_start_index-1,
+        city:this.city_filter_str,
+        level:this.level_filter_str,
+        keyword:this.search_keyword,
+      }).then((response)=>{
+        if(response.data.attractions.length>0){
+          this.attraction_list=response.data.attractions
+        }
+        else {
+          this.$message.warning("已经到底了")
+        }
+      })
+    },
+    searchGo(){
+      this.page_start_index=0
+      gx_api.get_attractions_range({
+        start:this.page_start_index,
+        end:this.page_max_contain+this.page_start_index-1,
+        city:this.city_filter_str,
+        level:this.level_filter_str,
+        keyword:this.search_keyword,
+      }).then((response)=>{
+        if(response.data.attractions.length>0){
+          this.attraction_list=response.data.attractions
+        }
+        else {
+          this.$message.warning("未找到相关数据")
+        }
+      })
+    }
   },
   mounted() {
-    this.getAllAttractions()
+    gx_api.get_attractions_city().then((response)=>{
+      this.city_filter_arr=response.data.city
+    })
+    gx_api.get_attractions_level().then((response)=>{
+      this.level_filter_arr=response.data.level.sort()
+    })
+    gx_api.get_attractions_range({
+      start:this.page_start_index,
+      end:this.page_max_contain+this.page_start_index-1,
+      city:this.city_filter_str,
+      level:this.level_filter_str,
+      keyword:this.search_keyword,
+    }).then((response)=>{
+      this.attraction_list=response.data.attractions
+    })
   },
   watch:{
+    city_filter_str(){
+      this.searchGo()
+    },
+    level_filter_str(){
+      this.searchGo()
+    },
     search_keyword(newVal){
-      if(newVal.length<=0){
-        this.attractions_list=this.attractions
+      if (newVal.length<=0){
+        this.searchGo()
       }
-    },
-    city_filter(newVal){
-      if(newVal.length>0){
-        if (this.level_filter.length<=0){
-          this.attractions_list=this.attractions.filter(item=>item.city===newVal)
-        }
-        else {
-          this.attractions_list=this.attractions.filter(item=>item.city===newVal && item.level===this.level_filter)
-        }
-      }
-      else {
-        this.attractions_list=this.attractions
-      }
-    },
-    level_filter(newVal){
-      if(newVal.length>0){
-        if(this.city_filter.length<=0){
-          this.attractions_list=this.attractions.filter(item=>item.level===newVal)
-        }
-        else {
-          this.attractions_list=this.attractions.filter(item=>item.level===newVal && item.city===this.city_filter)
-        }
-      }
-      else {
-        this.attractions_list=this.attractions
-      }
-    },
+    }
   },
 }
 </script>
@@ -135,30 +173,40 @@ export default {
 #container{
   width: 430px;
   height: calc(100vh - 60px);
-  overflow: auto;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   #top{
-    height: 80px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
     margin-top: 5px;
-    #top-search{
-      width: 100%;
-    }
-    #select-panel{
+    #top-select{
       width: 100%;
       display: flex;
-      justify-content: space-around;
     }
   }
-  #attraction-show-panel{
-    flex: 1;
-    overflow: auto;
+  #attractions-show-panel{
+    width: 100%;
+    height: calc(100% - 130px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    #attractions{
+      height: calc(100% - 40px);
+      overflow: auto;
+    }
+    #page-control{
+      margin-bottom: 5px;
+      text-align: center;
+    }
   }
   #bottom-buts{
-    height: 40px;
+    width: 100%;
     margin-bottom: 5px;
+    display: flex;
+    justify-content: space-around;
   }
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div id="attraction-card">
-    <div id="container">
+    <div id="container" @click="detailGo">
       <div id="image-left">
         <img src="@/assets/img/无图片.png" v-if="attractionInfo.img===null" alt="">
         <img :src="image" v-if="attractionInfo.img!==null" alt="">
@@ -42,11 +42,16 @@ export default {
   },
   components:{},
   computed:{},
-  methods:{},
+  methods:{
+    detailGo(){
+      this.$router.push('/attraction/attractionDetail?id='+this.attractionInfo.id)
+    },
+  },
   mounted() {
     if(this.attractionInfo.img===null){
       this.image="data:image/png;base64,"+this.attractionInfo.img
     }
+    // window.addEventListener('scroll',checkInParent(this),true)
   },
   watch:{},
 }
@@ -66,6 +71,9 @@ export default {
       height: 50px;
     }
   }
+  #image-left:hover{
+    cursor: pointer;
+  }
   #dis-right{
     flex: 1;
     display: flex;
@@ -76,5 +84,9 @@ export default {
       text-align: left;
     }
   }
+}
+#container:hover{
+  cursor: pointer;
+  background-color: rgb(159, 194, 255)
 }
 </style>

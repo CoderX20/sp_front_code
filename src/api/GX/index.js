@@ -52,6 +52,14 @@ export const edit_hall_message=(params)=>{
     return http.post('/editHallMessage',params)
 }
 
-export const get_all_attractions=()=>{
-    return http.post('/getAllAttractions')
+export const get_attractions_city=()=>{
+    return http.post('/getAttractionsCity')
+}
+
+export const get_attractions_level=()=>{
+    return http.post('/getAttractionsLevel')
+}
+
+export const get_attractions_range=(params)=>{
+    return http.post('/getAttractionsRange',params)
 }

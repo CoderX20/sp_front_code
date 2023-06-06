@@ -7,6 +7,7 @@ import personFile from "@/views/PersonFile.vue";
 import MyHallMessagesShow from "@/components/MyHallMessagesShow.vue";
 import MyAttractionMessagesShow from "@/components/MyAttractionMessagesShow.vue";
 import MyAgencyCommentsShow from "@/components/MyAgencyCommentsShow.vue";
+import AttractionsDetail from "@/components/AttractionsDetail.vue";
 
 Vue.use(VueRouter)
 
@@ -43,7 +44,15 @@ const routes = [
     path:"/attraction",
     components: {
       left:AttractionLeft
-    }
+    },
+    children:[
+      {
+        path:"attractionDetail",
+        components:{
+          attractionShow:AttractionsDetail
+        }
+      },
+    ]
   },
   {
     path:'/agency',
