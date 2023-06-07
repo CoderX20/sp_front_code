@@ -27,8 +27,8 @@
           <attraction-card v-for="item in attraction_list" :key="item.id" :attractionInfo="item"></attraction-card>
         </div>
         <div id="page-control">
-          <el-button icon="el-icon-d-arrow-left" @click="getPrePage">上一页</el-button>
-          <el-button icon="el-icon-d-arrow-right" @click="getNextPage">下一页</el-button>
+          <el-button icon="el-icon-d-arrow-left" @click="getPrePage" title="上一页"></el-button>
+          <el-button icon="el-icon-d-arrow-right" @click="getNextPage" title="下一页"></el-button>
         </div>
       </div>
       <div id="bottom-buts">
@@ -56,7 +56,11 @@ export default {
       page_max_contain:10,
     }
   },
-  computed:{},
+  computed:{
+    current_path(){
+      return this.$route.path
+    }
+  },
   components:{
     attractionCard
   },
@@ -170,6 +174,11 @@ export default {
     attraction_list(newVal){
       if (newVal.length>0){
         this.$store.state.gx.attractions_map=newVal
+      }
+    },
+    current_path(newVal){
+      if (newVal==='/attraction'){
+        this.$store.state.gx.attractions_map=this.attraction_list
       }
     }
   },

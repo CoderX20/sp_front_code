@@ -89,8 +89,11 @@ export default {
             pointToLayer:(point,latLng)=>{
               console.log(point)
               L.marker(latLng,{icon:this.attraction_icon})
-                  .bindPopup(`<a href="/attraction/attractionDetail?id=${point.id}">${point.properties.名称}</a>`)
+                  .bindPopup(`<p>${point.properties.名称}</p>`)
                   .addTo(editableLayers)
+                  .on('dblclick',(e)=>{
+                    this.$router.push(`/attraction/attractionDetail?id=${point.id}`)
+                  })
             },
           }).addTo(editableLayers) //这里需要将查询返回的结果添加到与绘制图形一个图层里面
         })
@@ -114,26 +117,34 @@ export default {
       var lat_min=100
       var lng_max=-1
       var lng_min=400
+      this.attractions_layer.clearLayers()
       if (this.attractions_points.length>0){
-        this.attractions_layer.clearLayers()
         this.attractions_points.forEach(item=>{
           lat_max=item.lat>lat_max?item.lat:lat_max
           lat_min=item.lat<lat_min?item.lat:lat_min
           lng_max=item.lng>lng_max?item.lng:lng_max
           lng_min=item.lng<lng_min?item.lng:lng_min
         })
-        this.map.setView(L.latLng((lat_max+lat_min)/2,(lng_max+lng_min)/2),6)
+        var zoom_number=6
+        if (this.attractions_points.length===1){
+          zoom_number=8
+        }
+        // console.log(this.attractions_points.length,zoom_number)
+        this.map.setView(L.latLng((lat_max+lat_min)/2,(lng_max+lng_min)/2),zoom_number)
         this.attractions_points.forEach(item=>{
           L.marker([item.lat,item.lng],{
             icon:this.attraction_icon,
-          }).bindPopup(`<a href="/attraction/attractionDetail?id=${item.id}">${item.name}</a>`).addTo(this.attractions_layer)
+          }).bindPopup(`<p>${item.name}</p>`)
+              .addTo(this.attractions_layer)
+              .on('dblclick',(e)=>{
+                this.$router.push(`/attraction/attractionDetail?id=${item.id}`)
+              })
         })
       }
       else {
-        this.attractions_layer.clearLayers()
         this.map.setView(L.latLng([30.18, 102.95]),5)
       }
-    }
+    },
   },
   mounted() {
     this.map=L.map('map', {

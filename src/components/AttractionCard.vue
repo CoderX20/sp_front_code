@@ -49,7 +49,7 @@ export default {
   },
   mounted() {
     if(this.attractionInfo.img===null){
-      this.image="data:image/png;base64,"+this.attractionInfo.img
+      this.image=this.attractionInfo.img
     }
     // window.addEventListener('scroll',checkInParent(this),true)
   },

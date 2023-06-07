@@ -63,3 +63,7 @@ export const get_attractions_level=()=>{
 export const get_attractions_range=(params)=>{
     return http.post('/getAttractionsRange',params)
 }
+
+export const get_attraction_by_id=(params)=>{
+    return http.post("/getAttractionsByID",params)
+}
