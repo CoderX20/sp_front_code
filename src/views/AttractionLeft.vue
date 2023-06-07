@@ -68,10 +68,28 @@ export default {
     back(){
       if (this.$route.path!=="/attraction"){
         this.$router.go(-1)
+        gx_api.get_attractions_range({
+          start:this.page_start_index,
+          end:this.page_max_contain+this.page_start_index-1,
+          city:this.city_filter_str,
+          level:this.level_filter_str,
+          keyword:this.search_keyword,
+        }).then((response)=>{
+          this.attraction_list=response.data.attractions
+        })
       }
     },
     home(){
       this.$router.push("/attraction")
+      gx_api.get_attractions_range({
+        start:this.page_start_index,
+        end:this.page_max_contain+this.page_start_index-1,
+        city:this.city_filter_str,
+        level:this.level_filter_str,
+        keyword:this.search_keyword,
+      }).then((response)=>{
+        this.attraction_list=response.data.attractions
+      })
     },
     reset(){
       this.search_keyword=""
@@ -179,6 +197,9 @@ export default {
     current_path(newVal){
       if (newVal==='/attraction'){
         this.$store.state.gx.attractions_map=this.attraction_list
+      }
+      else {
+        this.$store.state.gx.attractions_map=[]
       }
     }
   },

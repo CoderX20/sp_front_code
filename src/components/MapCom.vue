@@ -39,6 +39,7 @@ export default {
       this.map.addLayer(this.attractions_layer)
       var editableLayers = new L.FeatureGroup()
       this.map.addLayer(editableLayers)
+      this.map.invalidateSize(true)
 
       // 添加绘制控件
       var options = {
@@ -89,7 +90,7 @@ export default {
             pointToLayer:(point,latLng)=>{
               console.log(point)
               L.marker(latLng,{icon:this.attraction_icon})
-                  .bindPopup(`<p>${point.properties.名称}</p>`)
+                  .bindPopup(`<h4>${point.properties.名称}</h4><p>{{point.properties.等级}}景区</p>`)
                   .addTo(editableLayers)
                   .on('dblclick',(e)=>{
                     this.$router.push(`/attraction/attractionDetail?id=${point.id}`)
@@ -134,7 +135,7 @@ export default {
         this.attractions_points.forEach(item=>{
           L.marker([item.lat,item.lng],{
             icon:this.attraction_icon,
-          }).bindPopup(`<p>${item.name}</p>`)
+          }).bindPopup(`<h4>${item.name}</h4><p>${item.level}景区</p>`)
               .addTo(this.attractions_layer)
               .on('dblclick',(e)=>{
                 this.$router.push(`/attraction/attractionDetail?id=${item.id}`)

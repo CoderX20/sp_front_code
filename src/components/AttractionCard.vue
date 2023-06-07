@@ -10,7 +10,7 @@
           <h4>{{attractionInfo.name}}</h4>
         </div>
         <div id="rate">
-          评分:<span v-if="attractionInfo.score!==null">{{attractionInfo.score}}</span><span v-if="attractionInfo.score===null">无</span>
+          评分:<span v-if="attractionInfo.score!==null">{{attractionInfo.score.toFixed(2)}}</span><span v-if="attractionInfo.score===null">无</span>
         </div>
       </div>
     </div>

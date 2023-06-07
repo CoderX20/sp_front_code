@@ -67,3 +67,15 @@ export const get_attractions_range=(params)=>{
 export const get_attraction_by_id=(params)=>{
     return http.post("/getAttractionsByID",params)
 }
+
+export const add_attraction_score=(params)=>{
+    return http.post('/addAttractionScore',params)
+}
+
+export const alter_attraction_score=(params)=>{
+    return http.post('/alterAttractionScore',params)
+}
+
+export const get_my_attraction_score=(params)=>{
+    return http.post('/getMyAttractionScore',params)
+}
