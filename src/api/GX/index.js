@@ -79,3 +79,11 @@ export const alter_attraction_score=(params)=>{
 export const get_my_attraction_score=(params)=>{
     return http.post('/getMyAttractionScore',params)
 }
+
+export const get_attraction_comments=(params)=>{
+    return http.post('/getAttractionComments',params)
+}
+
+export const add_attraction_comment=(params)=>{
+    return http.post('/addAttractionComment',params)
+}

@@ -11,15 +11,21 @@
             <h4>{{detail.name}}</h4>
             <p>{{detail.address}}</p>
             <p>{{detail.level}}</p>
-            <p>评分:{{detail.score===null?"暂无评分":detail.score.toFixed(2)}}</p>
+<!--            <p>评分:{{detail.score===null?"暂无评分":detail.score.toFixed(2)}}</p>-->
+            <p v-if="detail.score!==null">评分:{{String(detail.score).slice(0,4)}}</p>
+            <p v-else>暂无评分</p>
           </div>
         </div>
         <div id="my-op">
           <el-button type="text" @click="isRate=true">评分</el-button>
-          <el-button type="text">评论</el-button>
+          <el-button type="text" :autofocus="show_index===1" @click="commentGo">评论</el-button>
           <el-button type="text">添加到路线</el-button>
           <el-button v-if="userInfo.identify==='admin'" type="text">编辑</el-button>
         </div>
+      </div>
+      <div id="detail-show">
+        <attraction-des :des="detail.des" v-if="show_index===0"></attraction-des>
+        <attraction-comments-show v-if="show_index===1"></attraction-comments-show>
       </div>
     </div>
     <el-dialog id="rate-attraction" title="评分" width="200px" :visible="isRate">
@@ -35,6 +41,8 @@
 </template>
 
 <script>
+import AttractionDes from "@/components/AttractionDes.vue";
+import AttractionCommentsShow from "@/components/AttractionCommentsShow.vue";
 import {mapState} from "vuex"
 import * as gx_api from "@/api/GX/index"
 export default {
@@ -46,9 +54,13 @@ export default {
       my_score:-1,
       has_score:false,
       isRate:false,
+      show_index:0,
     }
   },
-  components:{},
+  components:{
+    AttractionDes,
+    AttractionCommentsShow,
+  },
   computed:{
     ...mapState({
       userInfo:state => state.gx.userInfo,
@@ -116,7 +128,9 @@ export default {
         this.alterAttractionScore(this.userInfo.userid,this.userInfo.identify,this.attraction_id,this.my_score)
       }
       this.isRate=false
-      this.getAttractionDetail(this.attraction_id)
+    },
+    commentGo(){
+      this.show_index=this.show_index===1?0:1
     }
   },
   mounted() {
@@ -162,6 +176,11 @@ export default {
       justify-content: space-around;
       align-items: center;
     }
+  }
+  #detail-show{
+    width: 100%;
+    height: calc(100% - 195px);
+    flex: 1;
   }
 }
 #rate-attraction{

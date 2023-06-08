@@ -7,6 +7,7 @@ const gx = {
         myHallMessages:[],
         attractions:[],
         attractions_map:[],
+        attraction_comments:[],
     }),
     mutations: {},
     getters: {},

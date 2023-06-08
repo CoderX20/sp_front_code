@@ -50,7 +50,7 @@ const routes = [
         path:"attractionDetail",
         components:{
           attractionShow:AttractionsDetail
-        }
+        },
       },
     ]
   },
