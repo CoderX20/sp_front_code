@@ -8,6 +8,7 @@ const gx = {
         attractions:[],
         attractions_map:[],
         attraction_comments:[],
+        myTrumpAttractionComments:[],
     }),
     mutations: {},
     getters: {},

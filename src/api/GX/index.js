@@ -87,3 +87,19 @@ export const get_attraction_comments=(params)=>{
 export const add_attraction_comment=(params)=>{
     return http.post('/addAttractionComment',params)
 }
+
+export const remove_attraction_comment=(params)=>{
+    return http.post('/removeAttractionCommentID',params)
+}
+
+export const get_my_attraction_trump_comments=(params)=>{
+    return http.post('/getMyAttractionTrumpComments',params)
+}
+
+export const trump_attraction_comment=(params)=>{
+    return http.post('/trumpAttractionComment',params)
+}
+
+export const cancel_trump_attraction_comment=(params)=>{
+    return http.post('/cancelTrumpAttractionComment',params)
+}

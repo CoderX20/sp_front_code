@@ -64,6 +64,7 @@ export default {
   computed:{
     ...mapState({
       userInfo:state => state.gx.userInfo,
+      attractions_map:state => state.gx.attractions_map,
     }),
   },
   methods:{
@@ -139,7 +140,11 @@ export default {
     this.getMyAttractionScore(this.$cookies.get('userid'),this.$cookies.get('identify'),this.attraction_id)
   },
   watch:{
-
+    attractions_map(newVal){
+      if (newVal.length!==1){
+        this.$store.state.gx.attractions_map=[this.detail]
+      }
+    }
   },
 }
 </script>

@@ -15,7 +15,7 @@
           <img src="@/assets/img/没有数据.png" alt="no-data" width="150"><br>
           <p>还没人评论哟</p>
         </div>
-        <attraction-card v-for="item in comments" :key="item.id" :commentInfo="item"></attraction-card>
+        <comment-card v-for="item in comments" :key="item.id" :commentInfo="item"></comment-card>
       </div>
       <div class="mid-show" id="charts" v-if="show_index===1"></div>
       <div id="write-comment" v-if="show_index===0">
@@ -34,7 +34,7 @@
 <script>
 import * as gx_api from "@/api/GX/index"
 import {mapState} from "vuex"
-import AttractionCard from "@/components/AttractionCard.vue";
+import CommentCard from "@/components/CommentCard.vue";
 export default {
   data(){
     return{
@@ -50,7 +50,7 @@ export default {
     })
   },
   components:{
-    AttractionCard
+    CommentCard
   },
   methods:{
     getComments(){
@@ -79,17 +79,28 @@ export default {
         }).then((response)=>{
           if (response.data.state===1){
             this.$message.success("评论提交成功")
+            this.new_comment=''
+            this.getComments()
           }
           else {
             this.$message.error("出现了问题")
           }
         })
       }
+    },
+    getMyTrump_attractionCommentData(){
+      gx_api.get_my_attraction_trump_comments({
+        id:this.userInfo.userid,
+        identify:this.userInfo.identify,
+      }).then((response)=>{
+        this.$store.state.gx.myTrumpAttractionComments=response.data.comments
+      })
     }
   },
   mounted() {
     this.attraction_id=this.$route.query.id
     this.getComments()
+    this.getMyTrump_attractionCommentData()
   },
   watch:{},
 }
@@ -116,6 +127,9 @@ export default {
     width: 100%;
     height: calc(100% - 80px);
     overflow: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   #write-comment{
     width: 100%;
