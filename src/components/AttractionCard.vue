@@ -48,7 +48,7 @@ export default {
     },
   },
   mounted() {
-    if(this.attractionInfo.img===null){
+    if(this.attractionInfo.img!==null){
       this.image=this.attractionInfo.img
     }
     // window.addEventListener('scroll',checkInParent(this),true)
@@ -79,6 +79,7 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    padding-left: 10px;
     div{
       flex: 1;
       text-align: left;

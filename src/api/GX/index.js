@@ -103,3 +103,7 @@ export const trump_attraction_comment=(params)=>{
 export const cancel_trump_attraction_comment=(params)=>{
     return http.post('/cancelTrumpAttractionComment',params)
 }
+
+export const upload_attraction_file=(params)=>{
+    return http.post('/uploadAttractionData',params)
+}

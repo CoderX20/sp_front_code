@@ -17,7 +17,9 @@
         </div>
         <comment-card v-for="item in comments" :key="item.id" :commentInfo="item"></comment-card>
       </div>
-      <div class="mid-show" id="charts" v-if="show_index===1"></div>
+      <div class="mid-show" id="charts" v-if="show_index===1">
+        <div id="pie" ref="pie"></div>
+      </div>
       <div id="write-comment" v-if="show_index===0">
         <span id="input">
           <el-input placeholder="请输入评论" type="textarea" maxlength="150" show-word-limit
@@ -35,6 +37,7 @@
 import * as gx_api from "@/api/GX/index"
 import {mapState} from "vuex"
 import CommentCard from "@/components/CommentCard.vue";
+import * as chart from "echarts";
 export default {
   data(){
     return{
@@ -95,6 +98,35 @@ export default {
       }).then((response)=>{
         this.$store.state.gx.myTrumpAttractionComments=response.data.comments
       })
+    },
+    chartsShow(){
+      var pie=chart.init(this.$refs.pie)
+      pie.setOption({
+        title:{
+          text:"评论情感倾向"
+        },
+        legend:{
+          bottom:"bottom"
+        },
+        tooltip: {
+          trigger: 'item'
+        },
+        series:[
+          {
+            type: 'pie',
+            data:[
+              {
+                value:this.comments.filter(item=>item.emotion===1).length,
+                name:"正向评论"
+              },
+              {
+                value:this.comments.filter(item=>item.emotion===0).length,
+                name: "负面评论"
+              },
+            ]
+          }
+        ]
+      })
     }
   },
   mounted() {
@@ -102,7 +134,20 @@ export default {
     this.getComments()
     this.getMyTrump_attractionCommentData()
   },
-  watch:{},
+  watch:{
+    show_index(newVal){
+      if (newVal===1&&this.comments.length<10){
+        this.show_index=0
+        this.$message.warning("没有足够的数据")
+      }
+      else if (newVal===1&&this.comments.length>=10){
+        // dom加载需要一定时间，延迟显示统计图表
+        setTimeout(()=>{
+          this.chartsShow()
+        },200)
+      }
+    }
+  },
 }
 </script>
 
@@ -143,6 +188,10 @@ export default {
     #input{
       flex: 1;
     }
+  }
+  #pie{
+    width: 90%;
+    flex: 1;
   }
 }
 </style>
