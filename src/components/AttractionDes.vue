@@ -16,6 +16,7 @@ export default {
   },
   props:{
     des:{
+      type:String,
       default:""
     }
   },

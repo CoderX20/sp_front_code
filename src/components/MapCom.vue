@@ -52,6 +52,7 @@ export default {
       }
       // this.base_map.addTo(this.map)
       L.control.layers(all_base_map,main_map).addTo(this.map)
+      this.map.invalidateSize(true)
       L.control.scale().addTo(this.map)
       this.map.addLayer(this.attractions_layer)
       var editableLayers = new L.FeatureGroup()

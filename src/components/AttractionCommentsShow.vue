@@ -19,6 +19,7 @@
       </div>
       <div class="mid-show" id="charts" v-if="show_index===1">
         <div id="pie" ref="pie"></div>
+        <div id="cloud" ref="cloud"></div>
       </div>
       <div id="write-comment" v-if="show_index===0">
         <span id="input">
@@ -38,12 +39,14 @@ import * as gx_api from "@/api/GX/index"
 import {mapState} from "vuex"
 import CommentCard from "@/components/CommentCard.vue";
 import * as chart from "echarts";
+import "echarts-wordcloud"
 export default {
   data(){
     return{
       show_index:0,
       attraction_id:-1,
       new_comment:"",
+      words_cut:null,
     }
   },
   computed:{
@@ -101,6 +104,24 @@ export default {
     },
     chartsShow(){
       var pie=chart.init(this.$refs.pie)
+      var cloud=chart.init(this.$refs.cloud)
+      const keys=Object.keys(this.words_cut)
+      const wordCloudData = keys.map(key => {
+        return { name: key, value: this.words_cut[key] };
+      });
+      console.log(wordCloudData)
+      cloud.setOption({
+        title:{
+          text:"评论词云图"
+        },
+        tooltip: {},
+        series:[
+          {
+            type:"wordCloud",
+            data:wordCloudData
+          }
+        ]
+      })
       pie.setOption({
         title:{
           text:"评论情感倾向"
@@ -127,12 +148,22 @@ export default {
           }
         ]
       })
+    },
+    getWordsCut(){
+      gx_api.get_word_cut_attraction_comments({
+        attraction_id:this.attraction_id
+      }).then((response)=>{
+        this.words_cut=response.data.words
+      }).catch((err)=>{
+        console.log(err)
+      })
     }
   },
   mounted() {
     this.attraction_id=this.$route.query.id
     this.getComments()
     this.getMyTrump_attractionCommentData()
+    this.getWordsCut()
   },
   watch:{
     show_index(newVal){
@@ -190,6 +221,10 @@ export default {
     }
   }
   #pie{
+    width: 90%;
+    flex: 1;
+  }
+  #cloud{
     width: 90%;
     flex: 1;
   }

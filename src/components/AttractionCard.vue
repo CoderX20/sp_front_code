@@ -48,9 +48,11 @@ export default {
     },
   },
   mounted() {
-    if(this.attractionInfo.img!==null){
-      this.image=this.attractionInfo.img
-    }
+    setTimeout(()=>{
+      if(this.attractionInfo.img){
+        this.image=this.attractionInfo.img
+      }
+    },300)
     // window.addEventListener('scroll',checkInParent(this),true)
   },
   watch:{},
