@@ -38,7 +38,7 @@
         </div>
       </div>
     </div>
-    <el-dialog width="30%" id="edit-dialog" title="输入新的留言" :visible="edit_dialog_show">
+    <el-dialog width="30%" id="edit-dialog" title="输入新的留言" :visible.sync="edit_dialog_show">
       <div>
         <el-input v-model="new_message" type="textarea" rows="4" maxlength="150" show-word-limit></el-input>
       </div>

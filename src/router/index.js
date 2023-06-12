@@ -8,6 +8,7 @@ import MyHallMessagesShow from "@/components/MyHallMessagesShow.vue";
 import MyAttractionMessagesShow from "@/components/MyAttractionMessagesShow.vue";
 import MyAgencyCommentsShow from "@/components/MyAgencyCommentsShow.vue";
 import AttractionsDetail from "@/components/AttractionsDetail.vue";
+import RoutesManager from "@/components/RoutesManager.vue";
 
 Vue.use(VueRouter)
 
@@ -51,6 +52,12 @@ const routes = [
         components:{
           attractionShow:AttractionsDetail
         },
+      },
+      {
+        path:"routes",
+        components: {
+          attractionShow:RoutesManager,
+        }
       },
     ]
   },

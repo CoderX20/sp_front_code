@@ -20,11 +20,13 @@ export default {
         iconUrl: '/img/旅游景点.png',
         iconSize: [20, 20],
       }),
+      city_layer:L.geoJSON(),
     }
   },
   computed: {
     ...mapState({
       attractions_points:state => state.gx.attractions_map,
+      query_city:state => state.gx.query_city,
     }),
     current_path(){
       return this.$route.path
@@ -61,6 +63,7 @@ export default {
       this.map.addLayer(this.attractions_layer)
       var editableLayers = new L.FeatureGroup()
       this.map.addLayer(editableLayers)
+      this.map.addLayer(this.city_layer)
 
       // 添加绘制控件
       var options = {
@@ -158,7 +161,7 @@ export default {
         this.attractions_points.forEach(item=>{
           L.marker([item.lat,item.lng],{
             icon:this.attraction_icon,
-          }).bindPopup(`<h4>${item.name}</h4><p>${item.level}景区</p>`)
+          }).bindPopup(`<h3>${item.name}</h3><p>${item.level}景区</p><img src="${item.img}" width="150">`)
               .openPopup(L.latLng([item.lat,item.lng]))
               .addTo(this.attractions_layer)
               .on('dblclick',(e)=>{
@@ -170,6 +173,20 @@ export default {
         this.map.setView(L.latLng([30.18, 102.95]),5)
       }
     },
+    queryCityShow(){
+      var sqlParam = new L.supermap.GetFeaturesBySQLParameters({
+        queryParameter: {
+          name: "市@SiChuan",
+          attributeFilter: `市名称 like'%${this.query_city.slice(0,2)}%' `
+        },
+        datasetNames: ["SiChuan:市"]
+      });
+      new L.supermap
+          .FeatureService(this.data_url)
+          .getFeaturesBySQL(sqlParam, (serviceResult) => {
+             L.geoJSON(serviceResult.result.features).addTo(this.city_layer)
+          });
+    }
   },
   mounted() {
 
@@ -186,6 +203,12 @@ export default {
         setTimeout(()=>{
           this.map.invalidateSize(true)
         },40)
+      }
+    },
+    query_city(newVal){
+      this.city_layer.clearLayers()
+      if (newVal.length>0){
+        this.queryCityShow()
       }
     }
   },

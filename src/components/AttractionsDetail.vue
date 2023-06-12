@@ -191,6 +191,7 @@ export default {
     }
   },
   mounted() {
+    this.$store.state.gx.query_city=""
     this.attraction_id=this.$route.query.id
     this.getAttractionDetail(this.attraction_id)
     this.getMyAttractionScore(this.$cookies.get('userid'),this.$cookies.get('identify'),this.attraction_id)

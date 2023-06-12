@@ -32,9 +32,9 @@
         </div>
       </div>
       <div id="bottom-buts">
-        <el-button icon="el-icon-back" @click="back"></el-button>
-        <el-button icon="el-icon-s-home" @click="home"></el-button>
-        <el-button icon="el-icon-refresh-left" @click="reset"></el-button>
+        <el-button icon="el-icon-position" title="路线图" @click="routesGo"></el-button>
+        <el-button icon="el-icon-s-home" title="主页" @click="home"></el-button>
+        <el-button icon="el-icon-refresh-left" title="重置筛选" @click="reset"></el-button>
       </div>
     </div>
   </div>
@@ -43,6 +43,7 @@
 <script>
 import attractionCard from "@/components/AttractionCard.vue";
 import * as gx_api from "@/api/GX/index"
+import {mapState} from "vuex"
 export default {
   data(){
     return{
@@ -59,25 +60,17 @@ export default {
   computed:{
     current_path(){
       return this.$route.path
-    }
+    },
+    ...mapState({
+      userInfo:state => state.gx.userInfo,
+    })
   },
   components:{
     attractionCard
   },
   methods:{
-    back(){
-      if (this.$route.path!=="/attraction"){
-        this.$router.go(-1)
-        gx_api.get_attractions_range({
-          start:this.page_start_index,
-          end:this.page_max_contain+this.page_start_index-1,
-          city:this.city_filter_str,
-          level:this.level_filter_str,
-          keyword:this.search_keyword,
-        }).then((response)=>{
-          this.attraction_list=response.data.attractions
-        })
-      }
+    routesGo(){
+      this.$router.push("/attraction/routes?account_id="+this.userInfo.userid)
     },
     home(){
       this.$router.push("/attraction")
@@ -176,13 +169,16 @@ export default {
     }).then((response)=>{
       this.attraction_list=response.data.attractions
     })
+    this.$store.state.gx.query_city=this.city_filter_str
   },
   watch:{
-    city_filter_str(){
+    city_filter_str(newVal){
       this.searchGo("未找到相关数据")
+      this.$store.state.gx.query_city=newVal
     },
-    level_filter_str(){
+    level_filter_str(newVal){
       this.searchGo("未找到相关数据")
+      this.$store.state.gx.query_city=newVal
     },
     search_keyword(newVal){
       if (newVal.length<=0){

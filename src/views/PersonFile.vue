@@ -37,7 +37,7 @@
         </el-container>
       </el-col>
     </el-row>
-    <el-dialog id="pwd-dialog" title="修改密码" width="30%" @close="pwdDialogClosed" :visible="pwd_dialog_show">
+    <el-dialog id="pwd-dialog" title="修改密码" width="30%" @close="pwdDialogClosed" :visible.sync="pwd_dialog_show">
       <div>
         <el-input v-model="pwd1" placeholder="输入新密码" show-password></el-input>
       </div>
