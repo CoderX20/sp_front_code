@@ -1,6 +1,6 @@
 <template>
   <div id="attraction-des">
-    <div id="container">
+    <div id="container" v-if="des!==null">
       <section v-for="item in des.split('\n')" :key="item">
         {{item}}
       </section>

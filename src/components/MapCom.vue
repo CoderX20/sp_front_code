@@ -25,7 +25,10 @@ export default {
   computed: {
     ...mapState({
       attractions_points:state => state.gx.attractions_map,
-    })
+    }),
+    current_path(){
+      return this.$route.path
+    }
   },
   methods: {
     // 加载地图
@@ -52,6 +55,7 @@ export default {
       }
       // this.base_map.addTo(this.map)
       L.control.layers(all_base_map,main_map).addTo(this.map)
+      this.map.invalidateSize(true)
       this.map.invalidateSize(true)
       L.control.scale().addTo(this.map)
       this.map.addLayer(this.attractions_layer)
@@ -172,11 +176,17 @@ export default {
     this.mapLoad()
   },
   updated() {
-    this.map.invalidateSize(true)
   },
   watch:{
     attractions_points(){
       this.setAttractionsCenterZoom()
+    },
+    current_path(newVal){
+      if (newVal==="/"){
+        setTimeout(()=>{
+          this.map.invalidateSize(true)
+        },40)
+      }
     }
   },
 }
