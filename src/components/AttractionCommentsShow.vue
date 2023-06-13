@@ -37,7 +37,7 @@
 <script>
 import * as gx_api from "@/api/GX/index"
 import {mapState} from "vuex"
-import CommentCard from "@/components/CommentCard.vue";
+import CommentCard from "@/components/AttractionCommentCard.vue";
 import * as chart from "echarts";
 import "echarts-wordcloud"
 export default {

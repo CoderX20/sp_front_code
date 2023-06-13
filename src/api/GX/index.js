@@ -111,3 +111,11 @@ export const upload_attraction_file=(params)=>{
 export const get_word_cut_attraction_comments=(params)=>{
     return http.post("/getWordsCutAttractionComments",params)
 }
+
+export const get_my_routes_id=(params)=>{
+    return http.post('/getRoutesByAccountID',params)
+}
+
+export const add_new_route=(params)=>{
+    return http.post('/addNewRoute',params)
+}

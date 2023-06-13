@@ -154,7 +154,7 @@ export default {
         })
         var zoom_number=6
         if (this.attractions_points.length===1){
-          zoom_number=8
+          zoom_number=9
         }
         // console.log(this.attractions_points.length,zoom_number)
         this.map.setView(L.latLng((lat_max+lat_min)/2,(lng_max+lng_min)/2),zoom_number)

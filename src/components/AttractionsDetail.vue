@@ -34,7 +34,6 @@
       </div>
       <div id="buts">
         <el-button type="text" @click="subRate">提交</el-button>
-        <el-button type="text" @click="isRate=false">取消</el-button>
       </div>
     </el-dialog>
     <el-dialog id="edit-attraction-detail" title="编辑景点信息" width="40%" :visible.sync="isOpenEditDialog">
