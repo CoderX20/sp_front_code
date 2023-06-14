@@ -21,12 +21,15 @@ export default {
         iconSize: [20, 20],
       }),
       city_layer:L.geoJSON(),
+      route_layer:L.geoJSON(),
     }
   },
   computed: {
     ...mapState({
       attractions_points:state => state.gx.attractions_map,
       query_city:state => state.gx.query_city,
+      myRouteAttractions:state => state.gx.myRouteAttractions,
+      myRouteBegan:state => state.gx.myRouteBegan,
     }),
     current_path(){
       return this.$route.path
@@ -64,6 +67,7 @@ export default {
       var editableLayers = new L.FeatureGroup()
       this.map.addLayer(editableLayers)
       this.map.addLayer(this.city_layer)
+      this.map.addLayer(this.route_layer)
 
       // 添加绘制控件
       var options = {
@@ -186,6 +190,13 @@ export default {
           .getFeaturesBySQL(sqlParam, (serviceResult) => {
              L.geoJSON(serviceResult.result.features).addTo(this.city_layer)
           });
+    },
+    routeAttractionsShow() {
+      this.myRouteAttractions.attractions.map(item=>{
+        L.marker([item.lat,item.lng],{icon:this.attraction_icon})
+            .addTo(this.route_layer)
+            .bindPopup(`<h4>${item.name}</h4><p>${item.level}景区</p><img src="${item.img}" width="150">`)
+      })
     }
   },
   mounted() {
@@ -209,6 +220,11 @@ export default {
       this.city_layer.clearLayers()
       if (newVal.length>0){
         this.queryCityShow()
+      }
+    },
+    myRouteAttractions(newVal){
+      if (newVal.attractions){
+        this.routeAttractionsShow()
       }
     }
   },
