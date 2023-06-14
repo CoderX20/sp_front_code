@@ -54,6 +54,8 @@
 import {mapState} from "vuex"
 import * as gx_api from "@/api/GX";
 import * as charts from "echarts";
+import {getAllDaysToNow} from "@/utils/GetAllDaysToNow"
+import {ArraySum} from "@/utils/ArrayFun"
 
 export default {
   data() {
@@ -89,14 +91,16 @@ export default {
       var messagesChart,trumpedChart
       messagesChart=charts.init(this.$refs.messages)
       trumpedChart=charts.init(this.$refs.trumped)
-      var date_axis=this.myHallMessages.map(item=>{
-        return item.time
-      })
-      // 数组去重
-      date_axis=Array.from(new Set(date_axis)).sort()
+      var date_axis=getAllDaysToNow()
+      var trump_sum=[]
+      for(var el=0 ; el<date_axis.length;el++){
+        trump_sum.push(ArraySum(this.myHallMessages.filter(item=>item.time===date_axis[el]).map(item=>{
+          return item.trump_count
+        })))
+      }
       messagesChart && messagesChart.setOption({
         title:{
-          text:"发帖数量"
+          text:"今年发帖数量"
         },
         legend:{},
         tooltip: {
@@ -108,22 +112,28 @@ export default {
         yAxis: {
           type: 'value'
         },
+        dataZoom:[
+          {
+            type: 'inside',
+            start:0
+          }
+        ],
         series: [
           {
-            data: this.myHallMessages.map((item)=>{
-              return this.myHallMessages.filter(val=>val.time===item.time).length
-            }).sort(),
+            data: date_axis.map(item=>{
+              return this.myHallMessages.filter(el=>el.time===item).length
+            }),
             type: 'line',
           }
         ],
       })
       trumpedChart && trumpedChart.setOption({
         title:{
-          text:"被点赞数量"
+          text:"今年被点赞数量"
         },
         legend:{},
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
         },
         xAxis:{
           data:date_axis
@@ -131,13 +141,15 @@ export default {
         yAxis: {
           type: 'value'
         },
+        dataZoom:[
+          {
+            type: 'inside',
+            start:0
+          }
+        ],
         series: [
           {
-            data: date_axis.map(item=>{
-              return eval(this.myHallMessages.filter(el=>el.time===item).map(val=>{
-                return val.trump_count
-              }).join('+'))
-            }),
+            data: trump_sum,
             type: 'line',
           }
         ],

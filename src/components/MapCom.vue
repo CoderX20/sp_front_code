@@ -29,6 +29,7 @@ export default {
       }),
       city_layer:L.geoJSON(),
       route_layer:L.geoJSON(),
+      editableLayers:L.featureGroup(),
     }
   },
   computed: {
@@ -55,7 +56,7 @@ export default {
         zoomControl: false,
         zoom: 5,
         layers: [vec_map, base_map],
-        drawControl: true,
+        drawControl: false,
       })
       var draw_layer //绘制的图层
       var all_base_map={
@@ -72,8 +73,7 @@ export default {
       this.map.invalidateSize(true)
       L.control.scale().addTo(this.map)
       this.map.addLayer(this.attractions_layer)
-      var editableLayers = new L.FeatureGroup()
-      this.map.addLayer(editableLayers)
+      this.map.addLayer(this.editableLayers)
       this.map.addLayer(this.city_layer)
       this.map.addLayer(this.route_layer)
 
@@ -83,14 +83,15 @@ export default {
             position: 'topleft',
             draw: {
               polyline: false,
-              polygon: true,
+              polygon: {},
               circle: false,
-              rectangle: true,
+              rectangle: {},
               marker: false,
-              remove: true,
+              remove: {},
+              circlemarker:false,
             },
             edit: {
-              featureGroup: editableLayers,
+              featureGroup: this.editableLayers,
               edit: false,
               remove: true
             }
@@ -105,13 +106,13 @@ export default {
       this.handleMapEvent(drawControl._container, this.map);
       // 绘制监听事件
       this.map.on("draw:created", (e)=> {
-        editableLayers.clearLayers()
+        this.editableLayers.clearLayers()
         var type = e.layerType
         draw_layer = e.layer;
         if (type === 'marker') {
           draw_layer.bindPopup('选择点');
         }
-        editableLayers.addLayer(draw_layer);
+        this.editableLayers.addLayer(draw_layer);
         // 创建集合查询参数
         var geometryParam = new L.supermap.GetFeaturesByGeometryParameters({
           datasetNames: ["SiChuan:A级旅游景点"],
@@ -125,17 +126,17 @@ export default {
           // console.log(result.result.features.features)
           L.geoJSON(result.result.features,{
             pointToLayer:(point,latLng)=>{
-              // console.log(point)
+              console.log(point)
               L.marker(latLng,{icon:this.attraction_icon})
                   .bindPopup(`<h4>${point.properties.NAME}</h4><p>${point.properties.LEVEL_USER}景区</p>`)
                   .openPopup(latLng)
-                  .addTo(editableLayers)
+                  .addTo(this.editableLayers)
                   .on('dblclick',(e)=>{
                     // console.log(e)
-                    this.$router.push(`/attraction/attractionDetail?id=${point.id+1}`)
+                    this.$router.push(`/attraction/attractionDetail?id=${Number(point.properties.ID)}`)
                   })
             },
-          }).addTo(editableLayers) //这里需要将查询返回的结果添加到与绘制图形一个图层里面
+          })//这里需要将查询返回的结果添加到与绘制图形一个图层里面
         })
       });
     },
@@ -158,6 +159,7 @@ export default {
       var lng_max=-1
       var lng_min=400
       this.attractions_layer.clearLayers()
+      this.editableLayers.clearLayers()
       if (this.attractions_points.length>0){
         this.attractions_points.forEach(item=>{
           lat_max=item.lat>lat_max?item.lat:lat_max
@@ -175,7 +177,7 @@ export default {
           L.marker([item.lat,item.lng],{
             icon:this.attraction_icon,
           }).bindPopup(`<h3>${item.name}</h3><p>${item.level}景区</p><img src="${item.img}" width="150">`)
-              .openPopup(L.latLng([item.lat,item.lng]))
+              .openPopup()
               .addTo(this.attractions_layer)
               .on('dblclick',(e)=>{
                 this.$router.push(`/attraction/attractionDetail?id=${item.id}`)
