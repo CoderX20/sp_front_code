@@ -7,6 +7,13 @@
 </template>
 
 <script>
+import L from "leaflet"
+import '@supermap/iclient-leaflet';
+import "leaflet-draw"
+import "leaflet/dist/leaflet.css"
+import "@supermap/iclient-leaflet/dist/iclient-leaflet.css"
+import "leaflet-draw/dist/leaflet.draw.css"
+
 import {mapState} from "vuex"
 export default {
   data() {
@@ -47,7 +54,8 @@ export default {
         center: [30.18, 102.95],
         zoomControl: false,
         zoom: 5,
-        layers: [vec_map, base_map]
+        layers: [vec_map, base_map],
+        drawControl: true,
       })
       var draw_layer //绘制的图层
       var all_base_map={
@@ -70,23 +78,24 @@ export default {
       this.map.addLayer(this.route_layer)
 
       // 添加绘制控件
-      var options = {
-        position: 'topleft',
-        draw: {
-          polyline: false,
-          polygon: {},
-          circle: false,
-          rectangle: {},
-          marker: false,
-          remove: {},
-        },
-        edit: {
-          featureGroup: editableLayers,
-          edit: false,
-          remove: true
-        }
-      };
-      var drawControl = new L.Control.Draw(options);
+      var drawControl = new L.Control.Draw(
+          {
+            position: 'topleft',
+            draw: {
+              polyline: false,
+              polygon: true,
+              circle: false,
+              rectangle: true,
+              marker: false,
+              remove: true,
+            },
+            edit: {
+              featureGroup: editableLayers,
+              edit: false,
+              remove: true
+            }
+          }
+      )
       this.map.addControl(drawControl);
       // 如果有一组显示旅游景点的信息
       if (this.attractions_points.length>0){
