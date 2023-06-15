@@ -4,7 +4,11 @@
     <el-row id="container">
       <el-col :span="4">
         <div id="user-avatar">
-          <img src="@/assets/img/已登陆.png">
+          <img src="@/assets/img/已登陆.png" alt="" v-if="userInfo.avatar===''">
+          <img :src="userInfo.avatar" alt="" v-else>
+        </div>
+        <div style="text-align: center">
+          <el-button size="mini" @click="avatar_dialog_show=true">修改头像</el-button>
         </div>
         <div id="basic-info">
           <div>
@@ -49,7 +53,18 @@
       </div>
       <div id="buts">
         <el-button @click="subNewPassword">确认</el-button>
-        <el-button @click="pwd_dialog_show=false">取消</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog id="avatar-edit" title="修改头像" width="30%" :visible.sync="avatar_dialog_show">
+      <div id="upload" style="text-align: center">
+        <el-upload drag :multiple="false" accept="image/*" :show-file-list="true" action=""
+                   list-type="picture" :auto-upload="false" :file-list="avatar_file_list" :on-change="fileChange">
+          <i class="el-icon-upload"></i>
+          <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        </el-upload>
+      </div>
+      <div style="text-align: center;margin: 20px">
+        <el-button @click="alterUserAvatar">确认</el-button>
       </div>
     </el-dialog>
   </div>
@@ -79,6 +94,9 @@ export default {
           path:"agencyComments",
         },
       ],
+      avatar_dialog_show:false,
+      avatar_file_list:[],
+      img_base64:""
     }
   },
   components:{
@@ -162,6 +180,38 @@ export default {
     cardGo(path){
       path="/user/"+path
       this.$router.push(path)
+    },
+    fileChange(file){
+      let reader=new FileReader()
+      reader.addEventListener('load',()=>{
+        this.img_base64=reader.result
+      },false)
+      // console.log(file)
+      if (file){
+        if (file.size / 1024 / 1024 < 5){
+          reader.readAsDataURL(file.raw)
+        }
+        else {
+          this.avatar_file_list=[]
+          this.$message.warning("文件大小不能超过5M")
+        }
+      }
+    },
+    alterUserAvatar(){
+      if(this.img_base64.length>0){
+        gx_api.alter_user_avatar({
+          account_id:this.userInfo.userid,
+          identify:this.userInfo.identify,
+          avatar_data:this.img_base64,
+        }).then((response)=>{
+          this.$message.success("头像修改成功")
+          this.avatar_dialog_show=false
+          this.$store.state.gx.userInfo.avatar=response.data.avatar
+        }).catch((err)=>{
+          this.$message.error("头像修改失败了")
+          console.log(err)
+        })
+      }
     }
   },
   mounted() {
@@ -183,6 +233,12 @@ export default {
       else {
         this.pwd_tips=""
       }
+    },
+    avatar_dialog_show(newVal){
+      if (!newVal){
+        this.avatar_file_list=[]
+        this.img_base64=""
+      }
     }
   }
 }
@@ -197,6 +253,8 @@ export default {
     img{
       width: 100px;
       height: 100px;
+      border-radius: 50%;
+      border: 2px solid grey;
     }
   }
   #basic-info{

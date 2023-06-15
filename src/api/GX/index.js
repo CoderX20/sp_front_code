@@ -119,3 +119,7 @@ export const get_my_routes_id=(params)=>{
 export const add_new_route=(params)=>{
     return http.post('/addNewRoute',params)
 }
+
+export const alter_user_avatar=(params)=>{
+    return http.post("/alterAccountAvatar",params)
+}

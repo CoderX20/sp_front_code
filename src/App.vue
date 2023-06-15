@@ -48,7 +48,8 @@ export default {
           userid:response.data.user.id,
           username:response.data.user.username,
           password:response.data.user.password,
-          identify:response.data.user.identify
+          identify:response.data.user.identify,
+          avatar:response.data.user.avatar,
         }
         // 获取点赞数据
         // setTimeout(()=>{

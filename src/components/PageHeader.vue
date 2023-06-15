@@ -13,7 +13,8 @@
         <el-dropdown @command="optionClick">
                 <span class="el-dropdown-link">
                   <img class="user" src="../assets/img/未登录.png" alt="" v-if="!hasLogin">
-                  <img class="user" src="../assets/img/已登陆.png" v-if="hasLogin">
+                  <img class="user" src="../assets/img/已登陆.png" alt="" v-if="hasLogin&&userInfo.avatar===''">
+                  <img class="user" :src="userInfo.avatar" alt="" v-if="hasLogin&&userInfo.avatar!==''">
                 </span>
           <el-dropdown-menu>
             <el-dropdown-item v-if="!hasLogin" command="0">登陆</el-dropdown-item>
@@ -140,7 +141,8 @@ export default {
             userid:response.data.user.id,
             username:response.data.user.username,
             password:response.data.user.password,
-            identify:response.data.user.identify
+            identify:response.data.user.identify,
+            avatar:response.data.user.avatar,
           }
           // this.getMyBasicData()
           // var now_path=this.$route.path
@@ -190,7 +192,8 @@ export default {
             userid:response.data.user.id,
             username:response.data.user.username,
             password:response.data.user.password,
-            identify:response.data.user.identify
+            identify:response.data.user.identify,
+            avatar:response.data.user.avatar,
           }
           // this.getMyBasicData()
           this.$router.go(0)
