@@ -17,7 +17,7 @@
             <img src="@/assets/img/点赞.png" alt="trump" v-if="hasTrumped<0" @click="trumpComment">
             <img src="@/assets/img/已点赞.png" alt="trump" v-if="hasTrumped>=0" @click="trumpComment">
           </span>
-          <span style="margin-left: 15px" v-if="userInfo.identify==='admin'">
+          <span style="margin-left: 15px" v-if="userInfo.identify==='admin' || userInfo.userid===commentInfo.account_id">
             <el-button type="text" size="mini" @click="delComment">删除</el-button>
           </span>
         </div>

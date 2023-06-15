@@ -37,6 +37,7 @@
 <script>
 import * as gx_api from "@/api/GX/index"
 import {mapState} from "vuex"
+import {sortByTimeAndTrumpCount} from "@/utils/ArrayFun"
 import CommentCard from "@/components/AttractionCommentCard.vue";
 import * as chart from "echarts";
 import "echarts-wordcloud"
@@ -63,7 +64,7 @@ export default {
       gx_api.get_attraction_comments({
         attraction_id:this.attraction_id
       }).then((response)=>{
-        this.$store.state.gx.attraction_comments=response.data.comments
+        this.$store.state.gx.attraction_comments=sortByTimeAndTrumpCount(response.data.comments)
       }).catch((err)=>{
         console.log(err)
       })

@@ -68,7 +68,7 @@ export default {
         "四川":base_map
       }
       // this.base_map.addTo(this.map)
-      L.control.layers(all_base_map,main_map).addTo(this.map)
+      L.control.layers(all_base_map,main_map,{position:"bottomright"}).addTo(this.map)
       this.map.invalidateSize(true)
       this.map.invalidateSize(true)
       L.control.scale().addTo(this.map)

@@ -1,8 +1,8 @@
 <template>
   <div id="person-file">
 <!--    个人中心-->
-    <el-row id="container">
-      <el-col :span="4">
+    <div id="container">
+      <div id="page-left">
         <div id="user-avatar">
           <img src="@/assets/img/已登陆.png" alt="" v-if="userInfo.avatar===''">
           <img :src="userInfo.avatar" alt="" v-else>
@@ -24,9 +24,12 @@
             <el-button icon="el-icon-delete" type="danger" size="mini" @click="delMyAccount">注销账户</el-button>
             <el-button icon="el-icon-edit" size="mini" @click="pwd_dialog_show=true">修改密码</el-button>
           </div>
+          <div v-if="userInfo.identify==='admin'" style="text-align: center">
+            <el-button>添加管理员用户</el-button>
+          </div>
         </div>
-      </el-col>
-      <el-col :span="20" id="right">
+      </div>
+      <div id="right">
         <el-container>
           <el-header>
             <div id="file-nav-header">
@@ -39,8 +42,8 @@
             <router-view name="personData"></router-view>
           </el-main>
         </el-container>
-      </el-col>
-    </el-row>
+      </div>
+    </div>
     <el-dialog id="pwd-dialog" title="修改密码" width="30%" @close="pwdDialogClosed" :visible.sync="pwd_dialog_show">
       <div>
         <el-input v-model="pwd1" placeholder="输入新密码" show-password></el-input>
@@ -248,35 +251,41 @@ export default {
 #container{
   width: 100vw;
   height: calc(100vh - 60px);
-  #user-avatar{
-    text-align: center;
-    img{
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      border: 2px solid grey;
-    }
-  }
-  #basic-info{
-    div{
-      margin-top: 5px;
-      a{
-        display: inline-block;
-        width: 70px;
-      }
-      .el-input{
-        width: calc(100% - 70px);
+  display: flex;
+  flex-direction: row;
+  #page-left{
+    flex: 1;
+    #user-avatar{
+      text-align: center;
+      img{
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 2px solid grey;
       }
     }
-    #account-buts{
-      display: flex;
-      justify-content: space-around;
-      .el-button{
-        margin: 3px;
+    #basic-info{
+      div{
+        margin-top: 5px;
+        a{
+          display: inline-block;
+          width: 70px;
+        }
+        .el-input{
+          width: calc(100% - 70px);
+        }
+      }
+      #account-buts{
+        display: flex;
+        justify-content: space-around;
+        .el-button{
+          margin: 3px;
+        }
       }
     }
   }
   #right{
+    flex: 5;
     .el-header{
       display: flex;
       align-items: center;

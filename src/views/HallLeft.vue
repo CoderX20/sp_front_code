@@ -4,7 +4,7 @@
 <!--      大厅-->
       <div id="messages-panel">
         <message-show v-for="item in message_list_show" :key="item.id" :id="item.id"
-                      :userid="item.id" :identify="item.identify" :username="item.name"
+                      :userid="item.userID" :identify="item.identify" :username="item.name"
                       :message="item.message" :time="item.time" :trump_count="item.trumpCount"></message-show>
       </div>
       <div id="write-panel">
@@ -25,7 +25,8 @@
 </template>
 
 <script>
-import MessageShow from "@/components/MessageShow.vue";
+import MessageShow from "@/components/HallMessageCard.vue";
+import {sortByTimeAndTrumpCount} from "@/utils/ArrayFun"
 import * as gx_api from "@/api/GX/index";
 import {mapState} from "vuex"
 export default {
@@ -115,7 +116,7 @@ export default {
   mounted() {
     gx_api.get_messages().then((response)=>{
       // temp用于在前端备份原始数据
-      this.messages_temp=response.data.dataset
+      this.messages_temp=sortByTimeAndTrumpCount(response.data.dataset)
       // show用于展示留言板
       this.message_list_show=this.messages_temp
     })

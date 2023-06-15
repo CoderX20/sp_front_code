@@ -180,10 +180,16 @@ export default {
         img:this.img_base64,
         des:this.new_des,
         attraction_id:this.attraction_id
-      }).then(()=>{
+      }).then((response)=>{
         this.$message.success("资料上传成功")
         this.getAttractionDetail(this.attraction_id)
         this.isOpenEditDialog=false
+        if (response.data.img){
+          this.detail.img=response.data.img
+        }
+        if (response.data.des){
+          this.detail.des=response.data.des
+        }
       }).catch((err)=>{
         console.log(err)
       })
