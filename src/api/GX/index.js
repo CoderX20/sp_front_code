@@ -1,4 +1,5 @@
 import http from "@/utils/requests"
+import app from "@/App.vue";
 
 // 登陆检查
 export const check_login=(params)=>{
@@ -153,4 +154,18 @@ export const add_new_route=(params)=>{
 // 修改用户头像
 export const alter_user_avatar=(params)=>{
     return http.post("/alterAccountAvatar",params)
+}
+
+// 获取当前用户所有景点下的评论
+export const get_all_my_attractions_comments=(params)=>{
+    return http.post('/getAllMyAttractionComments',params)
+}
+
+// 注册新的管理员
+export const register_admin=(params)=>{
+    return http.post('/registerAdmin',params)
+}
+
+export const edit_my_signature=(params)=>{
+    return http.post('/editMySignature',params)
 }

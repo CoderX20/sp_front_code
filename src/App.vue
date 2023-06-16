@@ -50,6 +50,7 @@ export default {
           password:response.data.user.password,
           identify:response.data.user.identify,
           avatar:response.data.user.avatar,
+          signature:response.data.user.signature
         }
         // 获取点赞数据
         // setTimeout(()=>{

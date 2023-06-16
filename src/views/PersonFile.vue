@@ -10,6 +10,10 @@
         <div style="text-align: center">
           <el-button size="mini" @click="avatar_dialog_show=true">修改头像</el-button>
         </div>
+        <div style="text-align: center;margin-top: 5px" title="个性签名">
+          <el-input type="textarea" v-model="$store.state.gx.userInfo.signature" maxlength="50" show-word-limit
+                    rows="2" @keyup.enter.native="editMySignature"></el-input>
+        </div>
         <div id="basic-info">
           <div>
             <a>用户ID</a><el-input v-model="userInfo.userid" :disabled="true" size="mini"></el-input>
@@ -25,7 +29,7 @@
             <el-button icon="el-icon-edit" size="mini" @click="pwd_dialog_show=true">修改密码</el-button>
           </div>
           <div v-if="userInfo.identify==='admin'" style="text-align: center">
-            <el-button>添加管理员用户</el-button>
+            <el-button @click="add_admin_show=true">添加管理员用户</el-button>
           </div>
         </div>
       </div>
@@ -70,6 +74,23 @@
         <el-button @click="alterUserAvatar">确认</el-button>
       </div>
     </el-dialog>
+    <el-dialog id="add-admin" title="添加管理员账户" width="30%" :visible.sync="add_admin_show">
+      <div class="row">
+        <el-input placeholder="输入管理员账户名" v-model="admin_name"></el-input>
+      </div>
+      <div class="row">
+        <el-input placeholder="输入密码" show-password v-model="admin_pwd1"></el-input>
+      </div>
+      <div class="row">
+        <el-input placeholder="请再次输入密码" show-password v-model="admin_pwd2"></el-input>
+      </div>
+      <div class="row" style="text-align: center;color: red">
+        {{pwd_tips}}
+      </div>
+      <div class="row" style="text-align: center">
+        <el-button @click="addAdmin">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -99,7 +120,11 @@ export default {
       ],
       avatar_dialog_show:false,
       avatar_file_list:[],
-      img_base64:""
+      img_base64:"",
+      add_admin_show:false,
+      admin_name:"",
+      admin_pwd1:"",
+      admin_pwd2:"",
     }
   },
   components:{
@@ -215,6 +240,31 @@ export default {
           console.log(err)
         })
       }
+    },
+    addAdmin(){
+      if (this.pwd_tips.length<=0&&this.admin_name.length>0){
+        gx_api.register_admin({
+          name:this.admin_name,
+          password:this.admin_pwd2,
+        }).then(()=>{
+          this.$message.success("管理员账户注册成功")
+          this.add_admin_show=false
+        }).catch((err)=>{
+          console.log(err)
+          this.$message.error("注册出错了")
+        })
+      }
+    },
+    editMySignature(){
+      gx_api.edit_my_signature({
+        account_id:this.userInfo.userid,
+        identify:this.userInfo.identify,
+        signature:this.userInfo.signature,
+      }).then(()=>{
+        this.$message.success("编辑成功")
+      }).catch((err)=>{
+        console.log(err)
+      })
     }
   },
   mounted() {
@@ -242,6 +292,22 @@ export default {
         this.avatar_file_list=[]
         this.img_base64=""
       }
+    },
+    admin_pwd1(newVal){
+      if (newVal!==this.admin_pwd2){
+        this.pwd_tips="两次密码不同"
+      }
+      else {
+        this.pwd_tips=""
+      }
+    },
+    admin_pwd2(newVal){
+      if (newVal!==this.admin_pwd1){
+        this.pwd_tips="两次密码不同"
+      }
+      else {
+        this.pwd_tips=""
+      }
     }
   }
 }
@@ -255,6 +321,7 @@ export default {
   flex-direction: row;
   #page-left{
     flex: 1;
+    padding: 10px;
     #user-avatar{
       text-align: center;
       img{
@@ -317,6 +384,16 @@ export default {
   #buts{
     display: flex;
     justify-content: space-around;
+  }
+}
+#add-admin{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  .row{
+    width: 90%;
+    margin: 10px;
   }
 }
 </style>

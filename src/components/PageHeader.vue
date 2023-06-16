@@ -194,6 +194,7 @@ export default {
             password:response.data.user.password,
             identify:response.data.user.identify,
             avatar:response.data.user.avatar,
+            signature:response.data.signature
           }
           // this.getMyBasicData()
           this.$router.go(0)
