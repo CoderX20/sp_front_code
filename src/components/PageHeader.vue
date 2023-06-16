@@ -24,6 +24,7 @@
             <el-dropdown-item v-if="hasLogin" style="color: red" command="3">退出登陆</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
+        <span v-if="hasLogin" style="color: white">{{userInfo.username}}</span>
       </div>
       <el-dialog id="login-dialog" title="登陆" :visible="!hasLogin" center width="30%">
 <!--        登陆弹窗-->
@@ -308,6 +309,7 @@ export default {
     flex: 1;
     display: flex;
     flex-direction: row-reverse;
+    align-items: center;
     .el-dropdown{
       margin: 10px;
     }

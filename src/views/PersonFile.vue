@@ -11,7 +11,8 @@
           <el-button size="mini" @click="avatar_dialog_show=true">修改头像</el-button>
         </div>
         <div style="text-align: center;margin-top: 5px" title="个性签名">
-          <el-input type="textarea" v-model="$store.state.gx.userInfo.signature" maxlength="50" show-word-limit
+          <el-input type="textarea" maxlength="50" show-word-limit
+                    v-model="$store.state.gx.userInfo.signature"
                     rows="2" @keyup.enter.native="editMySignature"></el-input>
         </div>
         <div id="basic-info">
@@ -106,16 +107,8 @@ export default {
       pwd_dialog_show:false,
       file_nav_data:[
         {
-          text:"我的大厅留言",
-          path:"hallMessages",
-        },
-        {
-          text:"我的景点留言",
-          path:"attractionComments",
-        },
-        {
-          text:"我的旅行社留言",
-          path:"agencyComments",
+          text:"我的发言",
+          path:"myMessages",
         },
       ],
       avatar_dialog_show:false,

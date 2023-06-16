@@ -1,14 +1,13 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import MapCom from "@/components/MapCom.vue";
 import HallLeft from "@/views/HallLeft.vue";
 import AttractionLeft from "@/views/AttractionLeft.vue";
 import AgencyLeft from "@/views/AgencyLeft.vue";
 import personFile from "@/views/PersonFile.vue";
-import MyHallMessagesShow from "@/components/MyHallMessagesShow.vue";
-import MyAttractionMessagesShow from "@/components/MyAttractionMessagesShow.vue";
-import MyAgencyCommentsShow from "@/components/MyAgencyCommentsShow.vue";
 import AttractionsDetail from "@/components/AttractionsDetail.vue";
 import RoutesManager from "@/components/RoutesManager.vue";
+import AllMyMessages from "@/components/AllMyMessages.vue";
 
 Vue.use(VueRouter)
 
@@ -36,15 +35,23 @@ VueRouter.prototype.replace=function (location,resolve,reject){
 
 const routes = [
   {
+    path: "",
+    components: {
+      map:MapCom
+    }
+  },
+  {
     path:"/hall",
     components:{
-      left:HallLeft
+      left:HallLeft,
+      map:MapCom
     }
   },
   {
     path:"/attraction",
     components: {
-      left:AttractionLeft
+      left:AttractionLeft,
+      map:MapCom
     },
     children:[
       {
@@ -64,7 +71,8 @@ const routes = [
   {
     path:'/agency',
     components: {
-      left:AgencyLeft
+      left:AgencyLeft,
+      map:MapCom
     }
   },
   {
@@ -74,28 +82,16 @@ const routes = [
     },
     children:[
       {
-        path:"hallMessages",
+        path:"myMessages",
         components:{
-          personData:MyHallMessagesShow
-        }
-      },
-      {
-        path:"attractionComments",
-        components: {
-          personData:MyAttractionMessagesShow
-        }
-      },
-      {
-        path:"agencyComments",
-        components: {
-          personData:MyAgencyCommentsShow
+          personData:AllMyMessages
         }
       },
       {
         path:"",
-        redirect:"hallMessages"
+        redirect:"myMessages"
       },
-    ]
+    ],
   },
 ]
 

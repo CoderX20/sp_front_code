@@ -8,7 +8,8 @@
       <el-main>
         <router-view name="left" class="main"></router-view>
         <router-view name="person" class="person"></router-view>
-        <map-com id="map" v-if="!this.$route.path.includes('user')"></map-com>
+        <router-view name="map" id="map"></router-view>
+<!--        <map-com id="map" v-if="!this.$route.path.includes('user')"></map-com>-->
       </el-main>
 <!--      <el-footer>底部信息栏</el-footer>-->
     </el-container>

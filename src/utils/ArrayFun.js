@@ -40,3 +40,14 @@ export const sortByTimeAndTrumpCount=(array=[])=>{
     });
     return array;
 }
+
+// 根据时间属性进行排序
+export const sortByTime=(array=[])=>{
+    array.sort(function(a, b) {
+        var timeA = new Date(a.time);
+        var timeB = new Date(b.time);
+        return timeA - timeB;
+    });
+
+    return array.reverse();
+}

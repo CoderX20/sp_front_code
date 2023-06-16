@@ -138,12 +138,16 @@ export default {
             type: 'pie',
             data:[
               {
-                value:this.comments.filter(item=>item.emotion===1).length,
+                value:this.comments.filter(item=>item.emotion>=0.7).length,
                 name:"正向评论"
               },
               {
-                value:this.comments.filter(item=>item.emotion===0).length,
-                name: "负面评论"
+                value:this.comments.filter(item=>item.emotion<0.7&&item.emotion>=0.3).length,
+                name: "中性评论"
+              },
+              {
+                value: this.comments.filter(item=>item.emotion<0.3).length,
+                name: "负向评论"
               },
             ]
           }
