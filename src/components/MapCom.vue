@@ -126,7 +126,7 @@ export default {
           // console.log(result.result.features.features)
           L.geoJSON(result.result.features,{
             pointToLayer:(point,latLng)=>{
-              console.log(point)
+              // console.log(point)
               L.marker(latLng,{icon:this.attraction_icon})
                   .bindPopup(`<h4>${point.properties.NAME}</h4><p>${point.properties.LEVEL_USER}景区</p>`)
                   .openPopup(latLng)

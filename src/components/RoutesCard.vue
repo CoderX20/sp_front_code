@@ -32,7 +32,7 @@ export default {
     return{
       isEditShow:false,
       new_route_name:this.routeInfo.name,
-      my_route_attractions:JSON.parse(this.routeInfo.route),
+      my_route_attractions:null,
     }
   },
   props:["routeInfo"],

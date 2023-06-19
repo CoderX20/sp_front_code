@@ -54,6 +54,7 @@ export default {
   },
   methods:{
     getMyRoutes(){
+      console.log(this.userInfo.identify)
       gx_api.get_my_routes_id({
         account_id:this.account_id,
         identify:this.userInfo.identify,
@@ -99,6 +100,9 @@ export default {
       if (newVal.length<=0){
         this.routes_data_show=this.routes_data_origin
       }
+    },
+    userInfo(){
+      this.getMyRoutes()
     }
   }
 }

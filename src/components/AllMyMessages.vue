@@ -6,14 +6,14 @@
         <div id="bottom-chart" ref="trumped_count"></div>
       </div>
       <div id="right">
-        <div id="hot-attractions"></div>
-        <div id="word-cloud"></div>
+        <HeatMap :has_comments_attractions="my_attractions_comments"></HeatMap>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import HeatMap from "@/components/HeatMap.vue";
 import {mapState} from "vuex"
 import * as gx_api from "@/api/GX/index"
 import * as echarts from "echarts"
@@ -31,6 +31,9 @@ export default {
       hall_trumped_data:[],
       attractions_trumped_data:[],
     }
+  },
+  components:{
+    HeatMap
   },
   computed:{
     ...mapState({
@@ -72,7 +75,8 @@ export default {
         tooltip: {
           trigger: 'axis'
         },
-        legend:{},
+        legend:{
+        },
         dataZoom:[
           {
             type: 'inside',
@@ -158,22 +162,18 @@ export default {
     setTimeout(()=>{
       this.getMyHallMessages()
       this.getAllMyAttractionsComments()
-    },600)
+    },400)
     this.deliver_charts=echarts.init(this.$refs.deliver_count)
-    this.trumped_charts=echarts.init(this.$refs.trumped_count)
+    // this.trumped_charts=echarts.init(this.$refs.trumped_count)
   },
   watch:{
-    my_hall_messages(newVal){
-      if (newVal.length>0){
-        this.showMyMessagesAndComments()
-        this.showTrumpedData()
-      }
+    my_hall_messages(){
+      this.showMyMessagesAndComments()
+      // this.showTrumpedData()
     },
-    my_attractions_comments(newVal){
-      if (newVal.length>0){
-        this.showMyMessagesAndComments()
-        this.showTrumpedData()
-      }
+    my_attractions_comments(){
+      this.showMyMessagesAndComments()
+      // this.showTrumpedData()
     },
   }
 }

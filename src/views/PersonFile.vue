@@ -96,6 +96,7 @@
 </template>
 
 <script>
+import HeatMap from "@/components/HeatMap.vue";
 import * as gx_api from "@/api/GX/index"
 import {mapState} from "vuex"
 export default {
@@ -121,6 +122,7 @@ export default {
     }
   },
   components:{
+    HeatMap
   },
   computed:{
     ...mapState({
@@ -178,6 +180,10 @@ export default {
       this.pwd2=""
     },
     subNewPassword(){
+      if (this.pwd2===this.userInfo.password){
+        this.$message.warning("不能和以前的密码相同")
+        return
+      }
       if(this.pwd_tips.length<=0){
         gx_api.alter_password({
           id:this.userInfo.userid,

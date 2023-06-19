@@ -109,6 +109,8 @@ export default {
       })
     },
     addAttractionScore(account_id,identify,attraction_id,score){
+      // console.log(score)
+      score=score<0?0:score
       gx_api.add_attraction_score({
         account_id,
         identify,
@@ -121,6 +123,8 @@ export default {
       })
     },
     alterAttractionScore(account_id,identify,attraction_id,score){
+      // console.log(score)
+      score=score<0?0:score
       gx_api.alter_attraction_score({
         account_id,
         identify,
