@@ -10,8 +10,11 @@ const gx = {
         attraction_comments:[],
         myTrumpAttractionComments:[],
         query_city:"",
-        myRouteAttractions:{},
-        myRouteBegan:","
+        myRouteAttractions:{
+            attractions:[],
+        },
+        myRouteStart:"",
+        isEditStart:false,
     }),
     mutations: {},
     getters: {},

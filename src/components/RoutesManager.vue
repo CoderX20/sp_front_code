@@ -54,7 +54,7 @@ export default {
   },
   methods:{
     getMyRoutes(){
-      console.log(this.userInfo.identify)
+      // console.log(this.userInfo.identify)
       gx_api.get_my_routes_id({
         account_id:this.account_id,
         identify:this.userInfo.identify,
@@ -79,7 +79,9 @@ export default {
           account_id:this.userInfo.userid,
           identify:this.userInfo.identify,
           route_name:this.new_route_name,
-          route:""
+          route:"{\"nodes\":[]}",
+          line:"",
+          start:"",
         }).then(()=>{
           this.$message.success("新路线添加完成")
           this.isAddRouteOpen=false
@@ -93,7 +95,7 @@ export default {
     this.getMyRoutes()
     setTimeout(()=>{
       this.$store.state.gx.attractions_map=[]
-    },400)
+    },600)
   },
   watch:{
     search_keyword(newVal){
@@ -104,6 +106,9 @@ export default {
     userInfo(){
       this.getMyRoutes()
     }
+  },
+  destroyed() {
+    this.$store.state.gx.myRouteAttractions.attractions=[]
   }
 }
 </script>

@@ -1,5 +1,4 @@
 import http from "@/utils/requests"
-import app from "@/App.vue";
 
 // 登陆检查
 export const check_login=(params)=>{
@@ -168,4 +167,12 @@ export const register_admin=(params)=>{
 
 export const edit_my_signature=(params)=>{
     return http.post('/editMySignature',params)
+}
+
+export const update_my_routes_attractions=(params)=>{
+    return http.post('/updateRouteAttractions',params)
+}
+
+export const update_route_start=(params)=>{
+    return http.post('/addRouteStart',params)
 }

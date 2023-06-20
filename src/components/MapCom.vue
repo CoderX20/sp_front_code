@@ -1,7 +1,7 @@
 <template>
   <div id="map-show">
     <div id="container">
-      <div id="map"></div>
+      <div id="map" ref="map"></div>
     </div>
   </div>
 </template>
@@ -27,6 +27,14 @@ export default {
         iconUrl: '/img/旅游景点.png',
         iconSize: [20, 20],
       }),
+      walk_icon:L.icon({
+        iconUrl:require("@/assets/img/walk.png"),
+        iconSize: [15, 30],
+      }),
+      start_icon:L.icon({
+        iconUrl:require("@/assets/img/出发地.png"),
+        iconSize:[35,35]
+      }),
       city_layer:L.geoJSON(),
       route_layer:L.geoJSON(),
       editableLayers:L.featureGroup(),
@@ -36,8 +44,9 @@ export default {
     ...mapState({
       attractions_points:state => state.gx.attractions_map,
       query_city:state => state.gx.query_city,
-      myRouteAttractions:state => state.gx.myRouteAttractions,
-      myRouteBegan:state => state.gx.myRouteBegan,
+      myRouteAttractions:state => state.gx.myRouteAttractions.attractions,
+      myRouteStart: state => state.gx.myRouteStart,
+      isEditStart:state => state.gx.isEditStart,
     }),
     current_path(){
       return this.$route.path
@@ -54,6 +63,7 @@ export default {
         crs: L.CRS.EPSG4326,
         center: [30.18, 102.95],
         zoomControl: false,
+        maxZoom:17,
         zoom: 5,
         layers: [vec_map, base_map],
         drawControl: false,
@@ -139,6 +149,22 @@ export default {
           })//这里需要将查询返回的结果添加到与绘制图形一个图层里面
         })
       });
+      this.map.on('mousemove',()=>{
+        // 判断是否正在绘制起点
+        if (this.isEditStart){
+          this.$refs.map.style.cursor='crosshair'
+        }
+        else
+          this.$refs.map.style.cursor='pointer'
+      })
+      this.map.on('mousedown',(e)=>{
+        let lat_lng = e.latlng
+        if (this.isEditStart){
+          // L.marker([lat_lng.lat,lat_lng.lng]).addTo(this.route_layer).bindPopup("出发点")
+          this.$store.state.gx.myRouteStart=`${lat_lng.lat},${lat_lng.lng}`
+          this.$store.state.gx.isEditStart=false
+        }
+      })
     },
     handleMapEvent(div, map) {
       if (!div || !map) {
@@ -203,15 +229,100 @@ export default {
           });
     },
     routeAttractionsShow() {
-      this.myRouteAttractions.attractions.map(item=>{
+      this.route_layer.clearLayers()
+      var lat_max=-1
+      var lat_min=100
+      var lng_max=-1
+      var lng_min=400
+      this.myRouteAttractions.forEach(item=>{
+        lat_max=item.lat>lat_max?item.lat:lat_max
+        lat_min=item.lat<lat_min?item.lat:lat_min
+        lng_max=item.lng>lng_max?item.lng:lng_max
+        lng_min=item.lng<lng_min?item.lng:lng_min
+      })
+      this.map.setView(L.latLng((lat_max+lat_min)/2,(lng_max+lng_min)/2),6)
+      if (this.myRouteAttractions.length>0){
+        this.bestRouteShow()
+      }
+      this.myRouteAttractions.map(item=>{
         L.marker([item.lat,item.lng],{icon:this.attraction_icon})
             .addTo(this.route_layer)
-            .bindPopup(`<h4>${item.name}</h4><p>${item.level}景区</p><img src="${item.img}" width="150">`)
+            .bindPopup(`<h4>${item.name}</h4><p>${item.level}景区</p><img src="${item.img}" alt="" width="150">`)
+            .addTo(this.route_layer)
+            .on('dblclick',()=>{
+              this.$router.push(`/attraction/attractionDetail?id=${item.id}`)
+            })
       })
+    },
+    bestRouteShow(){
+      var points_nodes=this.myRouteAttractions.map(item=>{
+        return L.latLng([item.lat,item.lng])
+      })
+      if (this.myRouteStart.length>0){
+        points_nodes.push(L.latLng(this.myRouteStart.split(',')))
+        L.marker(this.myRouteStart.split(','),{icon:this.start_icon}).addTo(this.route_layer).bindPopup("出发点")
+      }
+      //网络分析结果参数
+      var resultSetting = new L.supermap.TransportationAnalystResultSetting({
+        //是否在分析结果中包含弧段要素集合
+        returnEdgeFeatures: true,
+        //返回的弧段要素集合中是否包含集合对象信息
+        returnEdgeGeometry: true,
+        //返回的结果中是否包含经过弧段ID集合
+        returnEdgeIDs: true,
+        //返回的分析结果总是否包含结点要素集合
+        returnNodeFeatures: false,
+        //返回的结点要素集合中是否包含集合对象信息
+        returnNodeGeometry: false,
+        //返回的分析结果中是否包含经过结点ID集合
+        returnNodeIDs: false,
+        //返回分析结果中是否包含行驶导引集合
+        returnPathGuides: false,
+        //返回结果中是否包含路由对象集合
+        returnRoutes: true
+      });
+      //网络分析通用参数
+      var analystParameter = new L.supermap.TransportationAnalystParameter({
+        //分析结果返回的内容
+        resultSetting: resultSetting,
+        //阻力字段的名称
+        weightFieldName: "SmLength"
+      });
+      var findPathParams = new L.supermap.FindPathParameters({
+        //是否通过结点ID指定路径分析的结点
+        isAnalyzeById: false,
+        //最佳路径分析经过的结点或设施点数组
+        nodes: points_nodes,
+        //是否按照弧段数最少的进行最佳路径分析
+        hasLeastEdgeCount: false,
+        //交通网络分析通用参数
+        parameter: analystParameter
+      });
+      // 创建路径分析实例
+      var findPathService = new L.supermap.NetworkAnalystService(this.Analyst_url);
+      findPathService.findPath(findPathParams,  (serviceResult)=> {
+        var result = serviceResult.result;
+        result.pathList.map( (result) =>{
+          L.geoJSON(result.route).addTo(this.route_layer);
+          L.geoJSON(result.pathGuideItems, {
+            pointToLayer:  (geoPoints, latlng)=> {
+              L.marker(latlng,{icon:this.walk_icon}).addTo(this.route_layer);
+            },
+            filter:  (geoJsonFeature) => {
+              if (geoJsonFeature.geometry && geoJsonFeature.geometry.type === 'Point') {
+                return true;
+              }
+              return false;
+            }
+          }).addTo(this.route_layer);
+        })
+      });
     }
   },
   mounted() {
-
+    if (this.current_path.includes('routes')){
+      this.$store.state.gx.attractions_map=[]
+    }
     this.mapLoad()
   },
   updated() {
@@ -226,6 +337,9 @@ export default {
           this.map.invalidateSize(true)
         },40)
       }
+      if (newVal.includes('routes')){
+        this.$store.state.gx.attractions_map=[]
+      }
     },
     query_city(newVal){
       this.city_layer.clearLayers()
@@ -234,8 +348,17 @@ export default {
       }
     },
     myRouteAttractions(newVal){
-      if (newVal.attractions){
+      this.$store.state.gx.attractions_map=[]
+      if (newVal.length>0){
         this.routeAttractionsShow()
+      }
+      else {
+        this.route_layer.clearLayers()
+      }
+    },
+    myRouteStart(newVal){
+      if (newVal.length>0){
+        this.bestRouteShow()
       }
     }
   },

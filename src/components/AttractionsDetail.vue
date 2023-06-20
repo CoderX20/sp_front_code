@@ -19,7 +19,7 @@
         <div id="my-op">
           <el-button type="text" @click="isRate=true">评分</el-button>
           <el-button type="text" :autofocus="show_index===1" @click="commentGo">评论</el-button>
-          <el-button type="text">添加到路线</el-button>
+          <el-button type="text" @click="routeSelectDialogShow">添加到路线</el-button>
           <el-button v-if="userInfo.identify==='admin'" type="text" @click="isOpenEditDialog=true">编辑</el-button>
         </div>
       </div>
@@ -53,6 +53,18 @@
         <el-button @click="isOpenEditDialog=false">取消</el-button>
       </div>
     </el-dialog>
+    <el-dialog id="my-routes" title="选择路线" width="30%" :visible.sync="routeSelectShow">
+      <div>
+        <el-checkbox-group v-model="selectedRoutes">
+          <div v-for="item in my_routes" :key="item.id" >
+            <el-checkbox :label="item.id">{{item.name}}</el-checkbox>
+          </div>
+        </el-checkbox-group>
+      </div>
+      <div style="text-align: center">
+        <el-button @click="addToRoute">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -79,6 +91,9 @@ export default {
       img_base64:null,
       new_des:"",
       origin_des:"",
+      routeSelectShow:false,
+      selectedRoutes:[],
+      my_routes:[],
     }
   },
   components:{
@@ -197,6 +212,41 @@ export default {
       }).catch((err)=>{
         console.log(err)
       })
+    },
+    routeSelectDialogShow(){
+      this.routeSelectShow=true
+      gx_api.get_my_routes_id({
+        account_id:this.userInfo.userid,
+        identify:this.userInfo.identify,
+      }).then((response)=>{
+        this.my_routes=response.data.routes
+      }).catch((err)=>{
+        console.log(err)
+      })
+    },
+    addToRoute(){
+      let attractions_on_routes
+      let i
+      let attraction_info=this.detail,temp=this.detail.des
+      attractions_on_routes=this.my_routes.filter(item=>this.selectedRoutes.filter(el=>el===item.id).length>0)
+      for (i=0;i<attractions_on_routes.length;i++){
+        attraction_info.des=""
+        let origin_nodes=JSON.parse(attractions_on_routes[i].route)
+        // console.log(origin_nodes)
+        if (origin_nodes.nodes.filter(item=>item.id===this.detail.id).length<=0){
+          origin_nodes.nodes.push(attraction_info)
+          gx_api.update_my_routes_attractions({
+            route_id:attractions_on_routes[i].id,
+            attractions:JSON.stringify(origin_nodes)
+          }).then(()=>{
+            this.$message.success("成功提交至路线")
+          }).catch((err)=>{
+            console.log(err)
+          })
+        }
+      }
+      this.routeSelectShow=false
+      this.detail.des=temp
     }
   },
   mounted() {
@@ -279,6 +329,16 @@ export default {
     display: flex;
     justify-content: space-around;
     align-items: center;
+  }
+}
+#my-routes{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  div{
+    margin: 10px;
+    width: 100%;
   }
 }
 </style>
