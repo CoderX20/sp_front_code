@@ -6,7 +6,7 @@
         <div id="bottom-chart" ref="trumped_count"></div>
       </div>
       <div id="right">
-        <HeatMap :has_comments_attractions="my_attractions_comments"></HeatMap>
+        <HeatMap></HeatMap>
       </div>
     </div>
   </div>
@@ -19,7 +19,6 @@ import * as gx_api from "@/api/GX/index"
 import * as echarts from "echarts"
 import {sortByTimeAndTrumpCount,sortByTime} from "@/utils/ArrayFun"
 import {getAllDaysToNow} from "@/utils/GetAllDaysToNow"
-import {ArraySum} from "@/utils/ArrayFun"
 export default {
   data(){
     return{
@@ -106,57 +105,6 @@ export default {
         ]
       })
     },
-    showTrumpedData(){
-      for (let i=0;i<this.x_data.length;i++){
-        this.hall_trumped_data.push(ArraySum(this.my_hall_messages.filter(item=>item.time===this.x_data[i]).map(item=>{
-          return item.trump_count
-        })))
-      }
-      for(let i=0;i<this.x_data.length;i++){
-        this.attractions_trumped_data.push(ArraySum(this.my_attractions_comments.filter(item=>item.time===this.x_data[i]).map(item=>{
-          return item.trump_count
-        })))
-      }
-      this.trumped_charts=echarts.init(this.$refs.trumped_count)
-      this.trumped_charts.setOption({
-        title: {
-          text: '今年留言点赞量'
-        },
-        xAxis:{
-          data:this.x_data
-        },
-        yAxis: {
-          type: 'value'
-        },
-        tooltip: {
-          trigger: 'axis'
-        },
-        legend:{},
-        dataZoom:[
-          {
-            type: 'inside',
-            start:this.x_data.length-10,
-            end:this.x_data.length
-          },
-          {
-            start: this.x_data.length-10,
-            end:this.x_data.length
-          }
-        ],
-        series:[
-          {
-            name:"大厅点赞",
-            data:this.hall_trumped_data,
-            type:"line"
-          },
-          {
-            name:"景点点赞",
-            data:this.attractions_trumped_data,
-            type:"line"
-          },
-        ],
-      })
-    }
   },
   mounted() {
     setTimeout(()=>{
@@ -164,16 +112,13 @@ export default {
       this.getAllMyAttractionsComments()
     },400)
     this.deliver_charts=echarts.init(this.$refs.deliver_count)
-    // this.trumped_charts=echarts.init(this.$refs.trumped_count)
   },
   watch:{
     my_hall_messages(){
       this.showMyMessagesAndComments()
-      // this.showTrumpedData()
     },
     my_attractions_comments(){
       this.showMyMessagesAndComments()
-      // this.showTrumpedData()
     },
   }
 }

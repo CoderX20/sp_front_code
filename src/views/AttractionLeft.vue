@@ -154,22 +154,24 @@ export default {
     }
   },
   mounted() {
-    gx_api.get_attractions_city().then((response)=>{
-      this.city_filter_arr=response.data.city
-    })
-    gx_api.get_attractions_level().then((response)=>{
-      this.level_filter_arr=response.data.level.sort()
-    })
-    gx_api.get_attractions_range({
-      start:this.page_start_index,
-      end:this.page_max_contain+this.page_start_index-1,
-      city:this.city_filter_str,
-      level:this.level_filter_str,
-      keyword:this.search_keyword,
-    }).then((response)=>{
-      this.attraction_list=response.data.attractions
-    })
-    this.$store.state.gx.query_city=this.city_filter_str
+    if (this.$route.path==="/attraction"){
+      gx_api.get_attractions_city().then((response)=>{
+        this.city_filter_arr=response.data.city
+      })
+      gx_api.get_attractions_level().then((response)=>{
+        this.level_filter_arr=response.data.level.sort()
+      })
+      gx_api.get_attractions_range({
+        start:this.page_start_index,
+        end:this.page_max_contain+this.page_start_index-1,
+        city:this.city_filter_str,
+        level:this.level_filter_str,
+        keyword:this.search_keyword,
+      }).then((response)=>{
+        this.attraction_list=response.data.attractions
+      })
+      this.$store.state.gx.query_city=this.city_filter_str
+    }
   },
   watch:{
     city_filter_str(newVal){

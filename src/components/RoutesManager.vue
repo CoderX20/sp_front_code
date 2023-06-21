@@ -84,6 +84,7 @@ export default {
           start:"",
         }).then(()=>{
           this.$message.success("新路线添加完成")
+          this.getMyRoutes()
           this.isAddRouteOpen=false
         }).catch((err)=>{
           console.log(err)

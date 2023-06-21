@@ -169,10 +169,17 @@ export const edit_my_signature=(params)=>{
     return http.post('/editMySignature',params)
 }
 
+// 更新路线
 export const update_my_routes_attractions=(params)=>{
     return http.post('/updateRouteAttractions',params)
 }
 
+// 更新路线起点
 export const update_route_start=(params)=>{
     return http.post('/addRouteStart',params)
+}
+
+// 获取热门景点
+export const get_hot_attractions=()=>{
+    return http.post('/getHotAttractions')
 }

@@ -2,6 +2,14 @@
   <div id="hall-left">
     <div id="container">
 <!--      大厅-->
+      <div id="hot-attractions-show">
+        <el-carousel trigger="click" height="150px" :autoplay="true" :interval="1500" indicator-position="outside">
+          <el-carousel-item v-for="item in hot_attractions" :key="item.id" style="text-align: center" :title="item.name">
+            <img :src="item.img" alt="" height="150" v-if="item.img" @click="attractionGo(item.id)">
+            <img src="@/assets/img/无图片.png" height="150" alt="" v-else @click="attractionGo(item.id)">
+          </el-carousel-item>
+        </el-carousel>
+      </div>
       <div id="messages-panel">
         <message-show v-for="item in message_list_show" :key="item.id" :id="item.id"
                       :userid="item.userID" :identify="item.identify" :username="item.name"
@@ -13,11 +21,11 @@
                       @keyup.enter.native="searchMessage" prefix-icon="el-icon-search"></el-input>
         </div>
         <div class="row" id="input-panel">
-          <el-input type="textarea" rows="4" placeholder="输入发言" v-model="message_text" maxlength="150" show-word-limit></el-input>
+          <el-input type="textarea" rows="1" placeholder="输入发言" v-model="message_text" maxlength="150" show-word-limit></el-input>
         </div>
         <div class="row" id="buts">
-          <el-button @click="deliverNewMessage">发布</el-button>
-          <el-button @click="clearWroteMessage">清空</el-button>
+          <el-button @click="deliverNewMessage" size="mini">发布</el-button>
+          <el-button @click="clearWroteMessage" size="mini">清空</el-button>
         </div>
       </div>
     </div>
@@ -37,6 +45,7 @@ export default {
       search_keyword:"",
       message_text:"",
       myTrumpHallMessages:[],
+      hot_attractions:[],
     }
   },
   computed:{
@@ -111,6 +120,15 @@ export default {
           console.log(err)
         })
       }
+    },
+    // 获取热门景帝
+    getHotAttractions(){
+      gx_api.get_hot_attractions().then((response)=>{
+        this.hot_attractions=response.data.attractions
+      })
+    },
+    attractionGo(id){
+      this.$router.push(`/attraction/attractionDetail?id=${id}`)
     }
   },
   mounted() {
@@ -131,6 +149,7 @@ export default {
     }).catch((err)=>{
       console.log(err)
     })
+    this.getHotAttractions()
   },
   watch:{
     search_keyword(newVal){
@@ -152,13 +171,21 @@ export default {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  #hot-attractions-show{
+    margin: 10px;
+    width: 430px;
+    height: 160px;
+    img:hover{
+      cursor: pointer;
+    }
+  }
   #messages-panel{
     flex: 1;
     overflow: auto;
   }
   #write-panel{
     width: 400px;
-    height: 250px;
+    height: 120px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;

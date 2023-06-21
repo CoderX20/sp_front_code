@@ -255,6 +255,7 @@ export default {
       }
     },
     editMySignature(){
+      this.userInfo.signature=this.userInfo.signature.replace('\n','')
       gx_api.edit_my_signature({
         account_id:this.userInfo.userid,
         identify:this.userInfo.identify,

@@ -5,8 +5,8 @@
       <div class="row" id="name-show" style="color: blue;font-size: 12px">
         <span>@{{username}} &nbsp; <span v-if="identify==='admin'">(管理员)</span></span>
       </div>
-      <div class="row" style="font-size: 12px;">
-        {{message}}
+      <div class="row" style="font-size: 12px;" v-html="message">
+<!--        {{message}}-->
       </div>
       <div class="row" style="font-size: 10px" id="last-row">
         <div id="time">{{time}}</div>

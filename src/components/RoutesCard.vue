@@ -8,7 +8,7 @@
           </strong>
         </div>
         <div id="route-op">
-          <el-button icon="el-icon-edit" circle size="mini" title="编辑" type="primary" @click="isEditShow=!isEditShow"></el-button>
+          <el-button icon="el-icon-edit" circle size="mini" title="编辑" type="primary" @click="editRoute"></el-button>
           <el-button icon="el-icon-paperclip" circle size="mini" title="分享"></el-button>
           <el-button icon="el-icon-delete-solid" circle size="mini" title="删除" type="danger"></el-button>
         </div>
@@ -20,8 +20,8 @@
       </div>
       <el-collapse @change="handleChange">
         <el-collapse-item title="旅游景点" name="1">
-          <div v-for="item in my_route_attractions" :key="item.id">
-            <el-tag closable>{{item.name}}</el-tag>
+          <div class="each-attraction" v-for="item in my_route_attractions" :key="item.id" @click="attractionGo(item.id)">
+            <el-tag closable @close="delAttractionsOnRoute(item.id)">{{item.name}}</el-tag>
           </div>
         </el-collapse-item>
       </el-collapse>
@@ -38,7 +38,8 @@ export default {
       isEditShow:false,
       new_route_name:this.routeInfo.name,
       my_route_attractions:JSON.parse(this.routeInfo.route).nodes,
-      isEditMe_start:false
+      isEditMe_start:false,
+      basicInfo:this.routeInfo,
     }
   },
   computed:{
@@ -52,18 +53,49 @@ export default {
     handleChange(val){
       if (val.length>0){
         this.$store.state.gx.myRouteAttractions.attractions=this.my_route_attractions
+        this.$store.state.gx.myRouteStart=this.basicInfo.start
       }
       else {
         this.$store.state.gx.myRouteAttractions.attractions=[]
+        this.$store.state.gx.myRouteStart=""
       }
     },
     editStartPoint(){
       this.$store.state.gx.isEditStart=!this.$store.state.gx.isEditStart
       this.isEditMe_start=!this.isEditMe_start
+    },
+    attractionGo(id){
+      this.$router.push(`/attraction/attractionDetail?id=${id}`)
+    },
+    editRoute(){
+      if (!this.isEditShow){
+        this.$store.state.gx.isEditStart=false
+        this.isEditMe_start=false
+      }
+      this.isEditShow=!this.isEditShow
+    },
+    delAttractionsOnRoute(id){
+      this.my_route_attractions=this.my_route_attractions.filter(item=>item.id!==id)
+      this.$store.state.gx.myRouteAttractions.attractions=this.my_route_attractions
+      let edited_route=JSON.stringify({
+        nodes:this.my_route_attractions
+      })
+      gx_api.update_my_routes_attractions({
+        route_id:this.basicInfo.id,
+        attractions:edited_route
+      }).then(()=>{
+        this.$message.success("路线删除成功")
+      }).catch((err)=>{
+        console.log(err)
+      })
     }
   },
   mounted() {
 
+  },
+  destroyed() {
+    this.$store.state.gx.isEditStart=false
+    this.isEditMe_start=false
   },
   watch:{
     isEditShow(newVal){
@@ -78,6 +110,7 @@ export default {
           route_start:newVal,
         }).then(()=>{
           this.$message.success("出发点编辑成功")
+          this.basicInfo.start=this.myRouteStart
         }).catch((err)=>{
           console.log(err)
         })
@@ -96,6 +129,8 @@ export default {
 <style lang="less" scoped>
 #container{
   margin: 10px;
+  padding: 5px;
+  border: 1px blue solid;
   #top{
     width: 400px;
     height: auto;
@@ -110,6 +145,10 @@ export default {
     display: flex;
     justify-content: space-around;
     align-items: center;
+  }
+  .each-attraction:hover{
+    background-color: rgb(236, 245, 255);
+    cursor: pointer;
   }
 }
 </style>

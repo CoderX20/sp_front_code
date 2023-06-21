@@ -230,18 +230,27 @@ export default {
     },
     routeAttractionsShow() {
       this.route_layer.clearLayers()
+      this.attractions_layer.clearLayers()
       var lat_max=-1
       var lat_min=100
       var lng_max=-1
       var lng_min=400
+      // 计算景点中心点
       this.myRouteAttractions.forEach(item=>{
         lat_max=item.lat>lat_max?item.lat:lat_max
         lat_min=item.lat<lat_min?item.lat:lat_min
         lng_max=item.lng>lng_max?item.lng:lng_max
         lng_min=item.lng<lng_min?item.lng:lng_min
       })
-      this.map.setView(L.latLng((lat_max+lat_min)/2,(lng_max+lng_min)/2),6)
-      if (this.myRouteAttractions.length>0){
+      // 当没有出发点时，将路线上的景点的中心点设置为地图中心点
+      if (this.myRouteStart.length>0){
+        this.map.setView(L.latLng(this.myRouteStart.split(',')),6)
+      }
+      // 将地图中心点设置为出发点
+      else {
+        this.map.setView(L.latLng((lat_max+lat_min)/2,(lng_max+lng_min)/2),6)
+      }
+      if (this.myRouteAttractions.length>1){
         this.bestRouteShow()
       }
       this.myRouteAttractions.map(item=>{
