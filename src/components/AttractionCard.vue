@@ -90,6 +90,6 @@ export default {
 }
 #container:hover{
   cursor: pointer;
-  background-color: rgb(159, 194, 255)
+  background-color: rgb(170, 198, 238);
 }
 </style>

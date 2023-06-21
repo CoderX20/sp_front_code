@@ -17,7 +17,7 @@
       </div>
       <div id="write-panel">
         <div id="search-panel" class="row">
-            <el-input placeholder="请输入需要查询的留言" v-model="search_keyword"
+            <el-input placeholder="请输入需要查询的留言" v-model="search_keyword" size="mini"
                       @keyup.enter.native="searchMessage" prefix-icon="el-icon-search"></el-input>
         </div>
         <div class="row" id="input-panel">

@@ -183,3 +183,17 @@ export const update_route_start=(params)=>{
 export const get_hot_attractions=()=>{
     return http.post('/getHotAttractions')
 }
+
+export const del_my_route=(params)=>{
+    return http.post('/delMyRoute',params)
+}
+
+// 更改路线名
+export const alter_route_name=(params)=>{
+    return http.post('/alterRouteName',params)
+}
+
+// 根据路线id获取路线数据
+export const get_route_id=(params)=>{
+    return http.post('/getRouteByID',params)
+}

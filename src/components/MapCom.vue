@@ -13,6 +13,7 @@ import "leaflet-draw"
 import "leaflet/dist/leaflet.css"
 import "@supermap/iclient-leaflet/dist/iclient-leaflet.css"
 import "leaflet-draw/dist/leaflet.draw.css"
+import * as gx_api from "@/api/GX/index"
 
 import {mapState} from "vuex"
 export default {
@@ -50,6 +51,9 @@ export default {
     }),
     current_path(){
       return this.$route.path
+    },
+    route_id(){
+      return this.$route.query.route_id
     }
   },
   methods: {
@@ -326,13 +330,28 @@ export default {
           }).addTo(this.route_layer);
         })
       });
-    }
+    },
+    getAndShowRoute_onURL(){
+      if (this.route_id){
+        gx_api.get_route_id({
+          route_id:this.route_id
+        }).then((response)=>{
+          if (response.data.state===1){
+            this.$store.state.gx.myRouteAttractions.attractions=JSON.parse(response.data.route).nodes
+            this.$store.state.gx.myRouteStart=response.data.start
+          }
+        }).catch((err)=>{
+          console.log(err)
+        })
+      }
+    },
   },
   mounted() {
     if (this.current_path.includes('routes')){
       this.$store.state.gx.attractions_map=[]
     }
     this.mapLoad()
+    this.getAndShowRoute_onURL()
   },
   updated() {
   },
