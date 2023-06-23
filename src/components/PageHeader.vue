@@ -19,7 +19,6 @@
           <el-dropdown-menu>
             <el-dropdown-item v-if="!hasLogin" command="0">登陆</el-dropdown-item>
             <el-dropdown-item v-if="!hasLogin" command="1">注册</el-dropdown-item>
-            <el-dropdown-item v-if="hasLogin" style="font-size: 12px;text-align: center">{{userInfo.username}}</el-dropdown-item>
             <el-dropdown-item v-if="hasLogin" command="2">个人中心</el-dropdown-item>
             <el-dropdown-item v-if="hasLogin" style="color: red" command="3">退出登陆</el-dropdown-item>
           </el-dropdown-menu>

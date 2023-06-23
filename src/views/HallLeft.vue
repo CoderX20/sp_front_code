@@ -108,7 +108,7 @@ export default {
             this.message_text=""
             gx_api.get_messages().then((response)=>{
               // temp用于在前端备份原始数据
-              this.messages_temp=response.data.dataset
+              this.messages_temp=sortByTimeAndTrumpCount(response.data.dataset)
               // show用于展示留言板
               this.message_list_show=this.messages_temp
             })

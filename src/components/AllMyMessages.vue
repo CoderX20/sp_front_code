@@ -3,7 +3,16 @@
     <div id="container">
       <div id="left-chart">
         <div id="top-chart" ref="deliver_count"></div>
-        <div id="bottom-chart" ref="trumped_count"></div>
+        <div id="nearby">
+          <div id="nearby-title">
+            <h3>为您推荐的景点</h3>
+            <el-switch v-model="$store.state.gx.isShowNearbyAttractions" active-text="在地图上显示"></el-switch>
+          </div>
+          <div id="attractions">
+            <el-tag v-for="item in nearby_attractions" :key="item.id" disable-transitions
+                    @click="nearbyAttractionGo(Number(item.properties.ID))">{{item.properties.NAME}}</el-tag>
+          </div>
+        </div>
       </div>
       <div id="right">
         <HeatMap></HeatMap>
@@ -17,7 +26,7 @@ import HeatMap from "@/components/HeatMap.vue";
 import {mapState} from "vuex"
 import * as gx_api from "@/api/GX/index"
 import * as echarts from "echarts"
-import {sortByTimeAndTrumpCount,sortByTime} from "@/utils/ArrayFun"
+import {getRandomElementsInArr,sortByTime} from "@/utils/ArrayFun"
 import {getAllDaysToNow} from "@/utils/GetAllDaysToNow"
 export default {
   data(){
@@ -27,8 +36,6 @@ export default {
       x_data:getAllDaysToNow(),
       deliver_charts:null,
       trumped_charts:null,
-      hall_trumped_data:[],
-      attractions_trumped_data:[],
     }
   },
   components:{
@@ -37,7 +44,11 @@ export default {
   computed:{
     ...mapState({
       userInfo:state => state.gx.userInfo,
-    })
+      myNearbyAttractions:state => state.gx.myNearbyAttractions,
+    }),
+    nearby_attractions(){
+      return getRandomElementsInArr(this.myNearbyAttractions,10)
+    },
   },
   methods:{
     getMyHallMessages(){
@@ -105,6 +116,9 @@ export default {
         ]
       })
     },
+    nearbyAttractionGo(id){
+      this.$router.push(`/attraction/attractionDetail?id=${id}`)
+    },
   },
   mounted() {
     setTimeout(()=>{
@@ -120,6 +134,9 @@ export default {
     my_attractions_comments(){
       this.showMyMessagesAndComments()
     },
+  },
+  destroyed() {
+    this.$store.state.gx.isShowNearbyAttractions=false
   }
 }
 </script>
@@ -140,8 +157,19 @@ export default {
     #top-chart{
       flex: 1;
     }
-    #bottom-chart{
+    #nearby{
       flex: 1;
+      overflow: auto;
+      #nearby-title{
+        margin: 10px;
+      }
+      .el-tag{
+        margin: 5px;
+      }
+      .el-tag:hover{
+        cursor: pointer;
+        background-color: rgb(150, 190, 246);
+      }
     }
   }
   #right{

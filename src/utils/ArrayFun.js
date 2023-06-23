@@ -51,3 +51,16 @@ export const sortByTime=(array=[])=>{
 
     return array.reverse();
 }
+
+// 从数组中随机取N个元素
+export const getRandomElementsInArr=(array=[],num=1)=>{
+    if (array.length<=num){
+        return array
+    }
+    let a_len=array.length
+    let i;
+    for (i=0;i<a_len-num;i++){
+        array.splice((Math.random()*100*array.length)%array.length,1)
+    }
+    return array
+}

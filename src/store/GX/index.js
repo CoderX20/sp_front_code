@@ -15,6 +15,8 @@ const gx = {
         },
         myRouteStart:"",
         isEditStart:false,
+        myNearbyAttractions:[],
+        isShowNearbyAttractions:false,
     }),
     mutations: {},
     getters: {},
