@@ -197,3 +197,13 @@ export const alter_route_name=(params)=>{
 export const get_route_id=(params)=>{
     return http.post('/getRouteByID',params)
 }
+
+// 获取热门旅行社
+export const get_hot_agency=()=>{
+    return http.post('/getHotAgency')
+}
+
+// 根据用户搜索获取旅行社信息
+export const get_agency_search=(params)=>{
+    return http.post('/getAgencySearch',params)
+}

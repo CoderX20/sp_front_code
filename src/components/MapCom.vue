@@ -39,6 +39,7 @@ export default {
       city_layer:L.geoJSON(),
       route_layer:L.geoJSON(),
       editableLayers:L.featureGroup(),
+      agency_layer:new L.FeatureGroup(),
     }
   },
   computed: {
@@ -48,6 +49,8 @@ export default {
       myRouteAttractions:state => state.gx.myRouteAttractions.attractions,
       myRouteStart: state => state.gx.myRouteStart,
       isEditStart:state => state.gx.isEditStart,
+      isClickAgency:state => state.gx.isClickAgency,
+      shouldClearAgencyLayers:state => state.gx.shouldClearAgencyLayers,
     }),
     current_path(){
       return this.$route.path
@@ -90,6 +93,7 @@ export default {
       this.map.addLayer(this.editableLayers)
       this.map.addLayer(this.city_layer)
       this.map.addLayer(this.route_layer)
+      this.map.addLayer(this.agency_layer)
 
       // 添加绘制控件
       var drawControl = new L.Control.Draw(
@@ -159,7 +163,15 @@ export default {
           this.$refs.map.style.cursor='crosshair'
         }
         else
+        {
           this.$refs.map.style.cursor='pointer'
+        }
+        if (this.isClickAgency){
+          this.$refs.map.style.cursor='crosshair'
+        }
+        else {
+          this.$refs.map.style.cursor='pointer'
+        }
       })
       this.map.on('mousedown',(e)=>{
         let lat_lng = e.latlng
@@ -167,6 +179,11 @@ export default {
           // L.marker([lat_lng.lat,lat_lng.lng]).addTo(this.route_layer).bindPopup("出发点")
           this.$store.state.gx.myRouteStart=`${lat_lng.lat},${lat_lng.lng}`
           this.$store.state.gx.isEditStart=false
+        }
+        if (this.isClickAgency){
+          this.agency_layer.clearLayers()
+          this.queryCityName_agency(lat_lng.lat,lat_lng.lng)
+          this.$store.state.gx.isClickAgency=false
         }
       })
     },
@@ -345,6 +362,28 @@ export default {
         })
       }
     },
+    // 点击地图查询该市内的旅行社名称
+    queryCityName_agency(lat,lng){
+      let point=L.marker([lat,lng])
+      var geometryParam = new L.supermap.GetFeaturesByGeometryParameters({
+        datasetNames: ["SiChuan:市"],
+        geometry: point,
+        spatialQueryMode: "WITHIN",
+        toIndex:10000,
+      });
+      new L.supermap
+          .FeatureService(this.data_url)
+          .getFeaturesByGeometry(geometryParam,  (serviceResult)=> {
+            // console.log(serviceResult.result.features)
+            if (serviceResult.result.features.features.length>0){
+              L.geoJSON(serviceResult.result.features)
+                  .bindPopup(`${serviceResult.result.features.features[0].properties.市名称}`)
+                  .addTo(this.agency_layer);
+              this.map.setView(L.latLng(lat,lng))
+              this.$store.state.gx.clickCityName=serviceResult.result.features.features[0].properties.市名称
+            }
+          });
+    }
   },
   mounted() {
     if (this.current_path.includes('routes')){
@@ -360,11 +399,14 @@ export default {
       this.setAttractionsCenterZoom()
     },
     current_path(newVal){
-      if (newVal==="/"){
-        setTimeout(()=>{
-          this.map.invalidateSize(true)
-        },40)
-      }
+      setTimeout(()=>{
+        this.map.invalidateSize(true)
+      },40)
+      // if (newVal==="/"){
+      //   setTimeout(()=>{
+      //     this.map.invalidateSize(true)
+      //   },40)
+      // }
       if (newVal.includes('routes')){
         this.$store.state.gx.attractions_map=[]
       }
@@ -387,6 +429,12 @@ export default {
     myRouteStart(newVal){
       if (newVal.length>0){
         this.bestRouteShow()
+      }
+    },
+    shouldClearAgencyLayers(newVal){
+      if (newVal){
+        this.agency_layer.clearLayers()
+        this.map.setView(L.latLng(30.18, 102.95),5)
       }
     }
   },

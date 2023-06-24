@@ -8,6 +8,7 @@ import personFile from "@/views/PersonFile.vue";
 import AttractionsDetail from "@/components/AttractionsDetail.vue";
 import RoutesManager from "@/components/RoutesManager.vue";
 import AllMyMessages from "@/components/AllMyMessages.vue";
+import AgencyMainPage from "@/components/AgencyMainPage.vue";
 
 Vue.use(VueRouter)
 
@@ -72,8 +73,16 @@ const routes = [
     path:'/agency',
     components: {
       left:AgencyLeft,
-      map:MapCom
-    }
+      map:MapCom,
+    },
+    children:[
+      {
+        path:"",
+        components:{
+          agencyView:AgencyMainPage
+        },
+      }
+    ],
   },
   {
     path:'/user',

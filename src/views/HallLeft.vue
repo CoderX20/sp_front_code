@@ -3,7 +3,7 @@
     <div id="container">
 <!--      大厅-->
       <div id="hot-attractions-show">
-        <el-carousel trigger="click" height="150px" :autoplay="true" :interval="1500" indicator-position="outside">
+        <el-carousel trigger="click" height="150px" :autoplay="true" :interval="2000" indicator-position="outside">
           <el-carousel-item v-for="item in hot_attractions" :key="item.id" style="text-align: center" :title="item.name">
             <img :src="item.img" alt="" height="150" v-if="item.img" @click="attractionGo(item.id)">
             <img src="@/assets/img/无图片.png" height="150" alt="" v-else @click="attractionGo(item.id)">

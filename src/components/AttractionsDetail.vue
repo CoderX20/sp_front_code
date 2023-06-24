@@ -282,6 +282,7 @@ export default {
   align-items: center;
   #top{
     width: 100%;
+    margin-top: 5px;
     #basic-detail{
       display: flex;
       justify-content: space-between;
@@ -289,7 +290,6 @@ export default {
       #left-img{
         img{
           width: 150px;
-          height: 150px;
         }
       }
       #right-detail{
