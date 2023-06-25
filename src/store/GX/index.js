@@ -20,6 +20,8 @@ const gx = {
         isClickAgency:false,
         clickCityName:"",
         shouldClearAgencyLayers:false,
+        space_trump_data:[],
+        space_collect_data:[],
     }),
     mutations: {},
     getters: {},

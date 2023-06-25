@@ -135,6 +135,11 @@ export default {
     gx_api.get_messages().then((response)=>{
       // temp用于在前端备份原始数据
       this.messages_temp=sortByTimeAndTrumpCount(response.data.dataset)
+      this.messages_temp.forEach(item=>{
+        if (item.adminID!==null){
+          item.userID=item.adminID
+        }
+      })
       // show用于展示留言板
       this.message_list_show=this.messages_temp
     })

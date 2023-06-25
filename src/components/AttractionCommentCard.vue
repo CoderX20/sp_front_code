@@ -2,7 +2,7 @@
   <div id="comment-card">
     <div id="container">
       <div class="row" id="top" style="font-size: 12px">
-        <span>@{{commentInfo.name}}&nbsp;<span v-if="commentInfo.identify==='admin'">(管理员)</span></span>
+        <span @click="personSpaceGo">@{{commentInfo.name}}&nbsp;<span v-if="commentInfo.identify==='admin'">(管理员)</span></span>
       </div>
       <div class="row" style="font-size: 12px">
         {{commentInfo.comment}}
@@ -102,6 +102,15 @@ export default {
       }).then((response)=>{
         this.$store.state.gx.myTrumpAttractionComments=response.data.comments
       })
+    },
+    personSpaceGo() {
+      this.$router.push({
+        path:"/space",
+        query:{
+          account_id:this.commentInfo.account_id,
+          identify:this.commentInfo.identify
+        }
+      })
     }
   },
   mounted() {
@@ -120,6 +129,12 @@ export default {
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
+  #top{
+    span:hover{
+      cursor: pointer;
+      color: lightskyblue;
+    }
+  }
   .row{
     width: calc(100% - 10px);
     height: auto;

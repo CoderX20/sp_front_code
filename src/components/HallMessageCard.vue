@@ -3,7 +3,7 @@
     <div id="container">
       <!--      大厅留言板单个组件-->
       <div class="row" id="name-show" style="color: blue;font-size: 12px">
-        <span>@{{username}} &nbsp; <span v-if="identify==='admin'">(管理员)</span></span>
+        <span @click="personSpaceGo">@{{username}} &nbsp; <span v-if="identify==='admin'">(管理员)</span></span>
       </div>
       <div class="row" style="font-size: 12px;" v-html="message">
 <!--        {{message}}-->
@@ -143,6 +143,15 @@ export default {
       }).catch((err)=>{
         console.log(err)
       })
+    },
+    personSpaceGo(){
+      this.$router.push({
+        path:"/space",
+        query:{
+          account_id:this.userid,
+          identify:this.identify,
+        }
+      })
     }
   }
 }
@@ -158,6 +167,12 @@ export default {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  #name-show{
+    span:hover{
+      cursor: pointer;
+      color: lightskyblue;
+    }
+  }
   .row{
     width: calc(100% - 10px);
     height: auto;

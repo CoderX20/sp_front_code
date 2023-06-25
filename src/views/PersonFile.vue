@@ -111,6 +111,10 @@ export default {
           text:"我的发言",
           path:"myMessages",
         },
+        {
+          text:"我的空间",
+          path: `/space`
+        },
       ],
       avatar_dialog_show:false,
       avatar_file_list:[],
@@ -205,8 +209,19 @@ export default {
       this.pwd_dialog_show=false
     },
     cardGo(path){
-      path="/user/"+path
-      this.$router.push(path)
+      if (path.includes("space")){
+        this.$router.push({
+          path:path,
+          query:{
+            account_id:this.userInfo.userid,
+            identify:this.userInfo.identify,
+          }
+        })
+      }
+      else {
+        path="/user/"+path
+        this.$router.push(path)
+      }
     },
     fileChange(file){
       let reader=new FileReader()

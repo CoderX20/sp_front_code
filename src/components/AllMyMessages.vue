@@ -9,7 +9,7 @@
             <el-switch v-model="$store.state.gx.isShowNearbyAttractions" active-text="在地图上显示"></el-switch>
           </div>
           <div id="attractions">
-            <el-tag v-for="item in nearby_attractions" :key="item.id" disable-transitions
+            <el-tag v-for="(item,index) in nearby_attractions" :key="index" disable-transitions
                     @click="nearbyAttractionGo(Number(item.properties.ID))">{{item.properties.NAME}}</el-tag>
           </div>
         </div>
@@ -137,6 +137,7 @@ export default {
   },
   destroyed() {
     this.$store.state.gx.isShowNearbyAttractions=false
+    this.$store.state.gx.myNearbyAttractions=[]
   }
 }
 </script>

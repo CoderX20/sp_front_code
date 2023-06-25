@@ -207,3 +207,7 @@ export const get_hot_agency=()=>{
 export const get_agency_search=(params)=>{
     return http.post('/getAgencySearch',params)
 }
+
+export const get_user_info=(params)=>{
+    return http.post('/getUserInfo',params)
+}

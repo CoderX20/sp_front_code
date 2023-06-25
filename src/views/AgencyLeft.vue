@@ -2,9 +2,9 @@
   <div id="agency-left">
     <div id="container">
       <router-view id="agency-main" name="agencyView"></router-view>
-      <div id="agency-bottom">
-        <el-button icon="el-icon-s-home" title="旅行社主屏"></el-button>
-      </div>
+<!--      <div id="agency-bottom">-->
+<!--        <el-button icon="el-icon-s-home" title="旅行社主屏"></el-button>-->
+<!--      </div>-->
     </div>
   </div>
 </template>
@@ -40,11 +40,11 @@ export default {
   #agency-main{
     flex: 1;
   }
-  #agency-bottom{
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 5px;
-  }
+  //#agency-bottom{
+  //  display: flex;
+  //  justify-content: space-around;
+  //  align-items: center;
+  //  padding: 5px;
+  //}
 }
 </style>
