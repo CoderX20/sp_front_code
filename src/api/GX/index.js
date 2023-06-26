@@ -208,6 +208,38 @@ export const get_agency_search=(params)=>{
     return http.post('/getAgencySearch',params)
 }
 
+// 获取空间内的个人信息
 export const get_user_info=(params)=>{
     return http.post('/getUserInfo',params)
 }
+
+// 个人空间添加留言
+export const add_space_message=(params)=>{
+    return http.post('/addSpaceMessages',params)
+}
+
+// 获取个人空间内的发言
+export const get_space_message=(params)=>{
+    return http.post('/getSpaceMessages',params)
+}
+
+// 点赞个人空间里面的留言动态
+export const trump_space_message=(params)=>{
+    return http.post('/trumpSpaceMessage',params)
+}
+
+// 取消点赞个人空间里面的留言动态
+export const cancel_trump_space_message=(params)=>{
+    return http.post('/cancelTrumpSpaceMessage',params)
+}
+
+// 获取当前用户在个人空间留言动态里面的点赞数据
+export const get_my_space_message_trump_data=(params)=>{
+    return http.post('/getMyTrumpSpaceMessageData',params)
+}
+
+// 获取当前用户在个人空间留言动态的收藏数据
+export const get_my_space_message_collect_data=(params)=>{
+    return http.post('/getMyCollectSpaceMessageData',params)
+}
+

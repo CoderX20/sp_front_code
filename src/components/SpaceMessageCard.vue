@@ -10,23 +10,24 @@
           <el-button circle size="mini" type="danger" icon="el-icon-delete" title="删除"></el-button>
         </span>
       </div>
+      <hr>
       <div id="message-text">
         <p v-html="messageInfo.message"></p>
       </div>
       <div id="image">
-        <img :src="item" alt="" v-for="item in img_list" width="100" :key="item">
+        <img :src="item" alt="" v-for="item in img_list" width="150" :key="item">
       </div>
       <div id="visitor-op">
-        <span>
+        <div>
           {{messageInfo.trump_count}}
           <img src="@/assets/img/点赞.png" alt="" v-if="hasTrumped<0">
           <img src="@/assets/img/已点赞.png" alt="" v-if="hasTrumped>=0">
-        </span>
-        <span>
+        </div>
+        <div>
           {{messageInfo.collect_count}}
           <img src="@/assets/img/收藏.png" alt="" v-if="hasCollected<0">
           <img src="@/assets/img/已收藏.png" alt="" v-if="hasCollected>=0">
-        </span>
+        </div>
       </div>
     </div>
   </div>
@@ -37,7 +38,7 @@ import {mapState} from "vuex"
 export default {
   data(){
     return{
-      img_list:this.messageInfo.img.split(',')
+      img_list:this.messageInfo.img.split('\n')
     }
   },
   props:['messageInfo','name','account_id'],
@@ -59,6 +60,10 @@ export default {
 
 <style lang="less" scoped>
 #container{
+  width: 650px;
+  margin: 5px;
+  padding: 10px;
+  background-color: rgb(241, 241, 241);
   #top{
     display: flex;
     justify-content: space-between;
@@ -70,15 +75,19 @@ export default {
   #image{
     display: flex;
     flex-wrap: wrap;
+    img{
+      margin: 10px;
+    }
   }
   #visitor-op{
     display: flex;
     justify-content: space-around;
     align-items: center;
-    font-size: 12px;
+    font-size: 16px;
+    border-top: 1px lightblue dot-dot-dash;
     img{
-      width: 15px;
-      height: 15px;
+      width: 20px;
+      height: 20px;
     }
     img:hover{
       cursor: pointer;

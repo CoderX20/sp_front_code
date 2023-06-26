@@ -23,7 +23,7 @@ export default {
       my_routes:[],
       attractions_on_route:[],
       attraction_icon:L.icon({
-        iconUrl: '/img/旅游景点.png',
+        iconUrl: require("@/assets/img/旅游景点.png"),
         iconSize: [20, 20],
       }),
       attraction_nearby_icon:L.icon({

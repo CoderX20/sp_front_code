@@ -275,7 +275,7 @@ export default {
 <style lang="less" scoped>
 #container{
   width: 430px;
-  height: calc(100vh - 110);
+  height: calc(100vh - 110px);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -308,7 +308,6 @@ export default {
   }
   #detail-show{
     width: 100%;
-    height: calc(100% - 195px);
     flex: 1;
   }
 }

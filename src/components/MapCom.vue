@@ -25,7 +25,7 @@ export default {
       attractions_layer:L.geoJSON(),
       map:null,
       attraction_icon:L.icon({
-        iconUrl: '/img/旅游景点.png',
+        iconUrl: require("@/assets/img/旅游景点.png"),
         iconSize: [20, 20],
       }),
       walk_icon:L.icon({
