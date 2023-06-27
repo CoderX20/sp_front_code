@@ -181,7 +181,7 @@ export default {
       let message=this.new_message
       let i
       for (i=0;i<selected_route_id.length;i++){
-        message+=`<a href="/?route_id=${selected_route_id[i]}" target="_blank">${this.route_selected[i]}</a>`
+        message+=`<a href="#/?route_id=${selected_route_id[i]}" target="_blank">${this.route_selected[i]}</a>`
       }
       gx_api.add_space_message({
         account_id:this.userInfo.userid,

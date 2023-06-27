@@ -2,6 +2,14 @@
   <div id="map-show">
     <div id="container">
       <div id="map" ref="map"></div>
+      <div id="tool">
+        <el-collapse>
+          <el-collapse-item title="地图可视化">
+            <el-checkbox v-model="showHeatMap">显示景点热力图</el-checkbox>
+          </el-collapse-item>
+        </el-collapse>
+        <br>
+      </div>
     </div>
   </div>
 </template>
@@ -10,6 +18,7 @@
 import L from "leaflet"
 import '@supermap/iclient-leaflet';
 import "leaflet-draw"
+import "@/utils/leaflet-heat"
 import "leaflet/dist/leaflet.css"
 import "@supermap/iclient-leaflet/dist/iclient-leaflet.css"
 import "leaflet-draw/dist/leaflet.draw.css"
@@ -40,6 +49,9 @@ export default {
       route_layer:L.geoJSON(),
       editableLayers:L.featureGroup(),
       agency_layer:new L.FeatureGroup(),
+      heat_layer:new L.FeatureGroup(),
+      heat_data:[],
+      showHeatMap:false
     }
   },
   computed: {
@@ -82,10 +94,12 @@ export default {
         "地形图":ter_map
       }
       var main_map={
-        "四川":base_map
+        "四川":base_map,
       }
       // this.base_map.addTo(this.map)
-      L.control.layers(all_base_map,main_map,{position:"bottomright"}).addTo(this.map)
+      L.control.layers(all_base_map,main_map,{
+        position:"bottomright"
+      }).addTo(this.map)
       this.map.invalidateSize(true)
       this.map.invalidateSize(true)
       L.control.scale().addTo(this.map)
@@ -94,6 +108,7 @@ export default {
       this.map.addLayer(this.city_layer)
       this.map.addLayer(this.route_layer)
       this.map.addLayer(this.agency_layer)
+      this.map.addLayer(this.heat_layer)
 
       // 添加绘制控件
       var drawControl = new L.Control.Draw(
@@ -147,7 +162,7 @@ export default {
               // console.log(point)
               L.marker(latLng,{icon:this.attraction_icon})
                   .bindPopup(`<h4>${point.properties.NAME}</h4><p>${point.properties.LEVEL_USER}景区</p>`)
-                  .openPopup(latLng)
+                  .openPopup()
                   .addTo(this.editableLayers)
                   .on('dblclick',(e)=>{
                     // console.log(e)
@@ -383,6 +398,19 @@ export default {
               this.$store.state.gx.clickCityName=serviceResult.result.features.features[0].properties.市名称
             }
           });
+    },
+    getHeatData(){
+      gx_api.get_attraction_heat_map().then((response)=>{
+        this.heat_data=response.data.heat_data
+        if (this.heat_data.length>0){
+          L.heatLayer(this.heat_data, {
+            radius: 20,
+            minOpacity: 0.5
+          }).addTo(this.heat_layer);
+        }
+      }).catch((err)=>{
+        console.log(err)
+      })
     }
   },
   mounted() {
@@ -436,6 +464,14 @@ export default {
         this.agency_layer.clearLayers()
         this.map.setView(L.latLng(30.18, 102.95),5)
       }
+    },
+    showHeatMap(newVal){
+      if (newVal){
+        this.getHeatData()
+      }
+      else {
+        this.heat_layer.clearLayers()
+      }
     }
   },
 }
@@ -448,6 +484,16 @@ export default {
   #map{
     width: 100%;
     height: calc(100vh - 60px);
+  }
+  #tool{
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    z-index: 1000;
+    border: 1px grey solid;
+    background-color: white;
+    opacity: 80%;
+    padding: 5px;
   }
 }
 </style>

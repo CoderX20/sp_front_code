@@ -248,11 +248,18 @@ export const del_space_message=(params)=>{
     return http.post('/delSpaceMessage',params)
 }
 
+// 收藏个人空间的留言动态
 export const collect_space_message=(params)=>{
     return http.post('/collectSpaceMessage',params)
 }
 
+// 取消收藏个人空间的留言动态
 export const cancel_collect_space_message=(params)=>{
     return http.post('/cancelSpaceMessage',params)
+}
+
+// 获取景点热力图数据
+export const get_attraction_heat_map=()=>{
+    return http.post('/getHeatMapData')
 }
 

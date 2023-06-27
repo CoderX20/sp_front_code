@@ -178,9 +178,6 @@ export default {
     height: auto;
     margin: 3px;
     padding-left: 10px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
     align-items: center;
     #time{
       width: 70px;
@@ -197,6 +194,11 @@ export default {
         cursor: pointer;
       }
     }
+  }
+  #last-row{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
   }
 }
 </style>

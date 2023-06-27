@@ -148,7 +148,7 @@ export default {
       var time=`${year}-${month}-${day}`
       let params={}
       let message_text=""
-      message_text=`<a href="/?route_id=${this.routeInfo.id}" target="_blank">${this.share_des.length>0?this.share_des:"分享路线"}</a>`
+      message_text=`${this.share_des}<a href="#/?route_id=${this.routeInfo.id}" target="_blank">分享路线</a>`
       if (this.share_to_list.includes("大厅")){
         if (this.userInfo.identify==='users'){
           params={
