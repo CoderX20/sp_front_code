@@ -206,12 +206,23 @@ export default {
       }).catch((err)=>{
         console.log(err)
       })
+    },
+    getCollectData(){
+      gx_api.get_my_space_message_collect_data({
+        account_id:this.userInfo.userid,
+        identify:this.userInfo.identify,
+      }).then((response)=>{
+        this.$store.state.gx.space_collect_data=response.data.messages
+      }).catch((err)=>{
+        console.log(err)
+      })
     }
   },
   mounted() {
     this.getBasicInfo()
     this.getSpaceMessages()
     this.getTrumpData()
+    this.getCollectData()
   }
 }
 </script>

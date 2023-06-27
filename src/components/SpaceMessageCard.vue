@@ -6,8 +6,8 @@
           <strong>{{name}}</strong><br>
           <a>{{messageInfo.time}}</a>
         </span>
-        <span v-if="account_id===userInfo.userid">
-          <el-button circle size="mini" type="danger" icon="el-icon-delete" title="删除"></el-button>
+        <span v-if="account_id===userInfo.userid&&userInfo.identify===messageInfo.identify">
+          <el-button circle size="mini" type="danger" icon="el-icon-delete" title="删除" @click="delMessage"></el-button>
         </span>
       </div>
       <hr>
@@ -19,14 +19,14 @@
       </div>
       <div id="visitor-op">
         <div>
-          {{messageInfo.trump_count}}
-          <img src="@/assets/img/点赞.png" alt="" v-if="hasTrumped<0">
-          <img src="@/assets/img/已点赞.png" alt="" v-if="hasTrumped>=0">
+          {{trump_count}}
+          <img src="@/assets/img/点赞.png" alt="" v-if="hasTrumped<0" @click="trumpClick">
+          <img src="@/assets/img/已点赞.png" alt="" v-if="hasTrumped>=0" @click="trumpClick">
         </div>
         <div>
-          {{messageInfo.collect_count}}
-          <img src="@/assets/img/收藏.png" alt="" v-if="hasCollected<0">
-          <img src="@/assets/img/已收藏.png" alt="" v-if="hasCollected>=0">
+          {{collect_count}}
+          <img src="@/assets/img/收藏.png" alt="" v-if="hasCollected<0" @click="collectClick">
+          <img src="@/assets/img/已收藏.png" alt="" v-if="hasCollected>=0" @click="collectClick">
         </div>
       </div>
     </div>
@@ -34,11 +34,14 @@
 </template>
 
 <script>
+import * as gx_api from "@/api/GX/index"
 import {mapState} from "vuex"
 export default {
   data(){
     return{
-      img_list:this.messageInfo.img.split('\n')
+      img_list:this.messageInfo.img.split('\n'),
+      trump_count:this.messageInfo.trump_count,
+      collect_count:this.messageInfo.collect_count,
     }
   },
   props:['messageInfo','name','account_id'],
@@ -55,6 +58,112 @@ export default {
       return this.space_collect_data.indexOf(this.messageInfo.id)
     }
   },
+  methods:{
+    getTrumpData(){
+      gx_api.get_my_space_message_trump_data({
+        account_id:this.userInfo.userid,
+        identify:this.userInfo.identify,
+      }).then((response)=>{
+        this.$store.state.gx.space_trump_data=response.data.messages
+      }).catch((err)=>{
+        console.log(err)
+      })
+    },
+    getCollectData(){
+      gx_api.get_my_space_message_collect_data({
+        account_id:this.userInfo.userid,
+        identify:this.userInfo.identify,
+      }).then((response)=>{
+        this.$store.state.gx.space_collect_data=response.data.messages
+      }).catch((err)=>{
+        console.log(err)
+      })
+    },
+    trumpMessage(){
+      gx_api.trump_space_message({
+        account_id:this.userInfo.userid,
+        identify:this.userInfo.identify,
+        message_id:this.messageInfo.id,
+      }).then(()=>{
+        this.trump_count+=1
+        this.getTrumpData()
+      }).catch((err)=>{
+        console.log(err)
+      })
+    },
+    cancelTrumpMessage(){
+      gx_api.cancel_trump_space_message({
+        account_id:this.userInfo.userid,
+        identify:this.userInfo.identify,
+        message_id:this.messageInfo.id,
+      }).then(()=>{
+        this.trump_count--
+        this.getTrumpData()
+      }).catch((err)=>{
+        console.log(err)
+      })
+    },
+    trumpClick(){
+      if (this.hasTrumped<0){
+        this.trumpMessage()
+      }
+      else {
+        this.cancelTrumpMessage()
+      }
+    },
+    delMessage(){
+      this.$confirm("是否删除动态","警告",{
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(()=>{
+        gx_api.del_space_message({
+          message_id:this.messageInfo.id
+        }).then(()=>{
+          this.$message.success("删除成功")
+          this.$destroy()
+          this.$el.parentNode.removeChild(this.$el);
+        }).catch((err)=>{
+          console.log(err)
+        })
+      }).catch(()=>{})
+    },
+    collectMessage(){
+      gx_api.collect_space_message({
+        account_id:this.userInfo.userid,
+        identify:this.userInfo.identify,
+        message_id:this.messageInfo.id,
+      }).then(()=>{
+        this.collect_count++
+        this.getCollectData()
+        this.$message.success("收藏成功")
+      }).catch((err)=>{
+        console.log(err)
+      })
+    },
+    cancelCollectMessage(){
+      gx_api.cancel_collect_space_message({
+        account_id:this.userInfo.userid,
+        identify:this.userInfo.identify,
+        message_id:this.messageInfo.id,
+      }).then(()=>{
+        this.collect_count--
+        this.getCollectData()
+      }).catch((err)=>{
+        console.log(err)
+      })
+    },
+    collectClick(){
+      if (this.account_id!==this.userInfo.userid||this.userInfo.identify!==this.messageInfo.identify){
+        if (this.hasCollected<0){
+          this.collectMessage()
+        }
+        else {
+          this.cancelCollectMessage()
+        }
+      }
+    }
+  }
 }
 </script>
 

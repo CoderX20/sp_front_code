@@ -288,6 +288,9 @@ export default {
       justify-content: space-between;
       align-items: center;
       #left-img{
+        width: 150px;
+        height: 100px;
+        overflow: hidden;
         img{
           width: 150px;
         }

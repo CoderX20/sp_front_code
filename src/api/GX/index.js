@@ -243,3 +243,16 @@ export const get_my_space_message_collect_data=(params)=>{
     return http.post('/getMyCollectSpaceMessageData',params)
 }
 
+// 删除个人空间留言动态
+export const del_space_message=(params)=>{
+    return http.post('/delSpaceMessage',params)
+}
+
+export const collect_space_message=(params)=>{
+    return http.post('/collectSpaceMessage',params)
+}
+
+export const cancel_collect_space_message=(params)=>{
+    return http.post('/cancelSpaceMessage',params)
+}
+
