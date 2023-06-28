@@ -10,6 +10,7 @@ import RoutesManager from "@/components/RoutesManager.vue";
 import AllMyMessages from "@/components/AllMyMessages.vue";
 import AgencyMainPage from "@/components/AgencyMainPage.vue";
 import MySpace from "@/components/MySpace.vue";
+import AgencyInfoCard from "@/components/AgencyInfoCard.vue";
 
 Vue.use(VueRouter)
 
@@ -82,7 +83,13 @@ const routes = [
         components:{
           agencyView:AgencyMainPage
         },
-      }
+      },
+      {
+        path:"detail",
+        components: {
+          agencyView:AgencyInfoCard
+        }
+      },
     ],
   },
   {

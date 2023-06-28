@@ -1,7 +1,7 @@
 <template>
   <div id="agency-card">
     <div id="container">
-      <p id="name"><strong>{{basic_info.agency_name}}</strong></p>
+      <p id="name" @click="agencyGo"><strong>{{basic_info.agency_name}}</strong></p>
       <hr>
       <div style="font-size: 12px">
         <p>联系方式:{{basic_info.phone?basic_info.phone:"暂无联系方式"}}</p>
@@ -19,6 +19,11 @@ export default {
     }
   },
   props:['agencyInfo'],
+  methods:{
+    agencyGo(){
+      this.$router.push(`/agency/detail?agency_id=${this.basic_info.id}`)
+    }
+  }
 }
 </script>
 

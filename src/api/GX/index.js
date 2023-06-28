@@ -263,3 +263,27 @@ export const get_attraction_heat_map=()=>{
     return http.post('/getHeatMapData')
 }
 
+// 根据景点id获取旅行社数据
+export const get_agency_id=(params)=>{
+    return http.post('/getAgencyID',params)
+}
+
+// 获取当前用户在旅行社下评分数据
+export const get_my_agency_score=(params)=>{
+    return http.post('/getMyAgencyScore',params)
+}
+
+// 添加旅行社评分
+export const add_agency_score=(params)=>{
+    return http.post('/addAgencyScore',params)
+}
+
+// 修改旅行社评分
+export const alter_agency_score=(params)=>{
+    return http.post('/alterAgencyScore',params)
+}
+
+// 获取旅行社代理的景点
+export const get_agency_attractions=()=>{
+    return http.post('/getAgencyAttractions')
+}
