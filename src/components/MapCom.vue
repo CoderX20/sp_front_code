@@ -157,19 +157,34 @@ export default {
         // 几何查询
         new L.supermap.FeatureService(this.data_url).getFeaturesByGeometry(geometryParam, (result)=> {
           // console.log(result.result.features.features)
-          L.geoJSON(result.result.features,{
-            pointToLayer:(point,latLng)=>{
-              // console.log(point)
-              L.marker(latLng,{icon:this.attraction_icon})
-                  .bindPopup(`<h4>${point.properties.NAME}</h4><p>${point.properties.LEVEL_USER}景区</p>`)
+          result.result.features.features.forEach(item=>{
+            gx_api.get_attraction_by_id({
+              id:item.properties.ID
+            }).then((response)=>{
+              let point_data=response.data.attractions
+              L.marker([point_data.lat,point_data.lng],{
+                icon:this.attraction_icon
+              }).bindPopup(`<h3>${point_data.name}</h3><p>${point_data.level}景区</p><img src="${point_data.img}" alt="" width="150">`)
                   .openPopup()
                   .addTo(this.editableLayers)
                   .on('dblclick',(e)=>{
-                    // console.log(e)
-                    this.$router.push(`/attraction/attractionDetail?id=${Number(point.properties.ID)}`)
+                    this.$router.push(`/attraction/attractionDetail?id=${point_data.id}`)
                   })
-            },
-          })//这里需要将查询返回的结果添加到与绘制图形一个图层里面
+            })
+          })
+          // L.geoJSON(result.result.features,{
+          //   pointToLayer:(point,latLng)=>{
+          //     // console.log(point)
+          //     L.marker(latLng,{icon:this.attraction_icon})
+          //         .bindPopup(`<h4>${point.properties.NAME}</h4><p>${point.properties.LEVEL_USER}景区</p>`)
+          //         .openPopup()
+          //         .addTo(this.editableLayers)
+          //         .on('dblclick',(e)=>{
+          //           // console.log(e)
+          //           this.$router.push(`/attraction/attractionDetail?id=${Number(point.properties.ID)}`)
+          //         })
+          //   },
+          // })//这里需要将查询返回的结果添加到与绘制图形一个图层里面
         })
       });
       this.map.on('mousemove',()=>{

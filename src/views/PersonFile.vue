@@ -112,6 +112,10 @@ export default {
           path:"myMessages",
         },
         {
+          text:"我的收藏",
+          path:"myCollect",
+        },
+        {
           text:"我的空间",
           path: `/space`
         },

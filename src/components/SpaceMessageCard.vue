@@ -3,7 +3,7 @@
     <div id="container">
       <div id="top">
         <span>
-          <strong>{{name}}</strong><br>
+          <strong @click="personSpaceGo">{{messageInfo.name}}</strong><br>
           <a>{{messageInfo.time}}</a>
         </span>
         <span v-if="account_id===userInfo.userid&&userInfo.identify===messageInfo.identify">
@@ -44,7 +44,7 @@ export default {
       collect_count:this.messageInfo.collect_count,
     }
   },
-  props:['messageInfo','name','account_id'],
+  props:['messageInfo','account_id'],
   computed:{
     ...mapState({
       userInfo:state => state.gx.userInfo,
@@ -162,7 +162,16 @@ export default {
           this.cancelCollectMessage()
         }
       }
-    }
+    },
+    personSpaceGo(){
+      this.$router.push({
+        path:"/space",
+        query:{
+          account_id:this.messageInfo.account_id,
+          identify:this.messageInfo.identify,
+        }
+      })
+    },
   }
 }
 </script>
@@ -177,6 +186,10 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    strong:hover{
+      cursor: pointer;
+      color: blue;
+    }
     a{
       font-size: 12px;
     }

@@ -28,7 +28,7 @@
           <h5>当前空间没有留言记录</h5>
         </div>
         <space-message-card v-for="item in space_message_list" :key="item.id"
-                            :message-info="item" :name="user_info.name" :account_id="account_id"></space-message-card>
+                            :message-info="item" :account_id="account_id"></space-message-card>
       </div>
     </div>
     <el-dialog title="新增空间留言" id="add-new-message-dialog" :visible.sync="isShowAddNewDialog" width="40%"

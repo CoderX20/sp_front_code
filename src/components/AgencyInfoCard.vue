@@ -13,15 +13,20 @@
         </el-descriptions>
       </div>
       <div id="attractions">
-        <el-table :data="attraction_list">
-          <el-table-column label="景点" prop="name"></el-table-column>
-          <el-table-column label="票价" prop="price"></el-table-column>
-          <el-table-column label="操作">
-            <template slot-scope="scope">
-              <el-button type="primary" size="mini">购票</el-button>
+        <el-collapse accordion @change="handleChange">
+          <el-collapse-item v-for="(item,index) in route_list" :key="index" :name="index">
+            <template slot="title">
+              {{"出发地："+item.nodes[0].name}}<el-tag type="success" size="mini">价格:{{item.price}}</el-tag>
             </template>
-          </el-table-column>
-        </el-table>
+            <div style="padding: 5px">
+              <el-tag v-for="el in item.nodes" :key="el.id">{{el.name}}</el-tag>
+            </div>
+            <hr>
+            <div style="text-align: right;padding: 5px">
+              <el-button size="mini" type="primary" @click="buyTicket(item.price,item.nodes)">购票</el-button>
+            </div>
+          </el-collapse-item>
+        </el-collapse>
       </div>
     </div>
     <el-dialog title="评分" :visible.sync="isShowRateDialog" width="200px" style="text-align: center">
@@ -30,6 +35,20 @@
       </div>
       <div>
         <el-button size="mini" type="primary" @click="subRate">提交</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="付款" :visible.sync="isShowBuyTicket" width="30%" id="pay-dialog">
+      <div id="pay-code">
+        <img src="../assets/img/收款.png" alt="" width="300">
+      </div>
+      <div>
+        <el-input v-model="pay_price" disabled>
+          <template slot="prepend">应付金额</template>
+        </el-input>
+      </div>
+      <div id="pay-op">
+        <el-button type="primary" @click="subNewOrder">确定</el-button>
+        <el-button type="danger" @click="isShowBuyTicket=false">取消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -46,7 +65,10 @@ export default {
       isShowRateDialog:false,
       my_rate:-1,
       isRate:false,
-      attraction_list:[],
+      route_list:{},
+      isShowBuyTicket:false,
+      pay_price:0,
+      pay_route:"",
     }
   },
   computed:{
@@ -120,9 +142,46 @@ export default {
       }
     },
     getAttractions(){
-      gx_api.get_agency_attractions().then((response)=>{
-        this.attraction_list=response.data.attraction_list
-        this.$store.state.gx.attractions_map=this.attraction_list
+      gx_api.get_agency_attractions(
+          {
+            agency_id:this.agency_id
+          }
+      ).then((response)=>{
+        this.route_list=response.data.route_list.routes
+      }).catch((err)=>{
+        console.log(err)
+      })
+    },
+    handleChange(val){
+      if (typeof val==='number'){
+        this.$store.state.gx.myRouteAttractions.attractions=this.route_list[val].nodes
+      }
+      else {
+        this.$store.state.gx.myRouteAttractions.attractions=[]
+      }
+    },
+    buyTicket(price,route){
+      this.isShowBuyTicket=true
+      this.pay_price=price
+      this.pay_route=route
+    },
+    subNewOrder(){
+      var year=new Date().getFullYear()
+      var month=new Date().getMonth()+1
+      var day=new Date().getDate()
+      var hour=new Date().getHours()
+      var minutes=new Date().getMinutes()
+      var time=`${year}-${month}-${day} ${hour}:${minutes}`
+      gx_api.add_new_order({
+        account_id:this.userInfo.userid,
+        identify:this.userInfo.identify,
+        route:JSON.stringify(this.pay_route),
+        agency_id:this.agency_id,
+        price:this.pay_price,
+        add_time:time,
+      }).then(()=>{
+        this.$message.success("支付成功")
+        this.isShowBuyTicket=false
       }).catch((err)=>{
         console.log(err)
       })
@@ -131,6 +190,9 @@ export default {
   mounted() {
     this.getAgencyData()
     this.getAttractions()
+  },
+  destroyed() {
+    this.$store.state.gx.myRouteAttractions.attractions=[]
   }
 }
 </script>
@@ -152,6 +214,16 @@ export default {
     width: 430px;
     flex: 1;
     overflow: auto;
+  }
+}
+#pay-dialog{
+  text-align: center;
+  overflow: auto;
+  #pay-op{
+    margin: 10px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
   }
 }
 </style>

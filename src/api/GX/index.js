@@ -283,7 +283,16 @@ export const alter_agency_score=(params)=>{
     return http.post('/alterAgencyScore',params)
 }
 
-// 获取旅行社代理的景点
-export const get_agency_attractions=()=>{
-    return http.post('/getAgencyAttractions')
+// 获取旅行社代理的景点路线
+export const get_agency_attractions=(params)=>{
+    return http.post('/getAgencyAttractions',params)
+}
+
+// 添加新的旅行社路线订单
+export const add_new_order=(params)=>{
+    return http.post('/addNewOrder',params)
+}
+
+export const get_my_collect_message=(params)=>{
+    return http.post('/getMyCollectMessages',params)
 }

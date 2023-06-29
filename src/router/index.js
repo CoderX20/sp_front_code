@@ -11,6 +11,7 @@ import AllMyMessages from "@/components/AllMyMessages.vue";
 import AgencyMainPage from "@/components/AgencyMainPage.vue";
 import MySpace from "@/components/MySpace.vue";
 import AgencyInfoCard from "@/components/AgencyInfoCard.vue";
+import MyCollectMessage from "@/components/MyCollectMessage.vue";
 
 Vue.use(VueRouter)
 
@@ -107,6 +108,12 @@ const routes = [
       {
         path:"",
         redirect:"myMessages"
+      },
+      {
+        path:"myCollect",
+        components: {
+          personData:MyCollectMessage
+        }
       },
     ],
   },
