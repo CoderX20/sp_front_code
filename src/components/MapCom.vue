@@ -188,15 +188,8 @@ export default {
         })
       });
       this.map.on('mousemove',()=>{
-        // 判断是否正在绘制起点
-        if (this.isEditStart){
-          this.$refs.map.style.cursor='crosshair'
-        }
-        else
-        {
-          this.$refs.map.style.cursor='pointer'
-        }
-        if (this.isClickAgency){
+        // 判断是否正在绘制起点和选择旅行社城市
+        if (this.isEditStart||this.isClickAgency){
           this.$refs.map.style.cursor='crosshair'
         }
         else {

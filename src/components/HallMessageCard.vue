@@ -16,7 +16,7 @@
             <img src="@/assets/img/点赞.png" alt="trump-icon" v-if="hasTrumped<0" @click="trumpMessageClick">
             <img src="@/assets/img/已点赞.png" alt="has-trump" v-if="hasTrumped>=0" @click="trumpMessageClick">
           </span>
-          <span style="margin-left: 15px" v-if="userInfo.identify==='admin'|| userInfo.userid===userid">
+          <span style="margin-left: 15px" v-if="userInfo.identify==='admin'|| (userInfo.userid===userid&&userInfo.identify===identify)">
             <el-button size="mini" type="text" @click="clearMessage">清除</el-button>
           </span>
         </div>

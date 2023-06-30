@@ -116,6 +116,10 @@ export default {
           path:"myCollect",
         },
         {
+          text:"我的订单",
+          path:"myOrder",
+        },
+        {
           text:"我的空间",
           path: `/space`
         },

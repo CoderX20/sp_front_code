@@ -77,6 +77,8 @@ export default {
       else {
         this.$store.state.gx.myRouteAttractions.attractions=[]
         this.$store.state.gx.myRouteStart=""
+        this.$store.state.gx.isEditStart=false
+        this.isEditMe_start=false
       }
     },
     editStartPoint(){
@@ -199,6 +201,8 @@ export default {
     isEditShow(newVal){
       if(!newVal){
         this.new_route_name=this.routeInfo.name
+        this.$store.state.gx.isEditStart=false
+        this.isEditMe_start=false
       }
     },
     myRouteStart(newVal){

@@ -293,6 +293,12 @@ export const add_new_order=(params)=>{
     return http.post('/addNewOrder',params)
 }
 
+// 获取收藏空间留言数据
 export const get_my_collect_message=(params)=>{
     return http.post('/getMyCollectMessages',params)
+}
+
+// 获取我的订单
+export const get_my_order=(params)=>{
+    return http.post('/getMyOrder',params)
 }
